@@ -10,6 +10,7 @@ from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, field_validator
 
 from app.converter import convert, load_template_text
+from app.version import __version__
 
 DEFAULT_MAX_MARKDOWN_BYTES = 1_048_576
 DEFAULT_MAX_REQUEST_BYTES = 1_200_000
@@ -152,6 +153,11 @@ async def convert_markdown(payload: ConvertRequest) -> Response:
 @app.get("/health")
 async def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/version")
+async def version() -> dict[str, str]:
+    return {"version": __version__}
 
 
 @app.get("/ready")

@@ -10,9 +10,11 @@ import streamlit as st
 
 try:
     from app.converter import convert
+    from app.version import __version__
 except ModuleNotFoundError:
     sys.path.append(str(Path(__file__).resolve().parent.parent))
     from app.converter import convert
+    from app.version import __version__
 
 MAX_PREVIEW_STORE_ITEMS = 20
 
@@ -146,7 +148,9 @@ if "preview_url" not in st.session_state:
     st.session_state["preview_url"] = None
 
 st.title("Markdown → HTML")
-st.caption("Загрузите markdown-файл, проверьте превью и скачайте готовый HTML.")
+st.caption(
+    f"Версия {__version__}. Загрузите markdown-файл, проверьте превью и скачайте готовый HTML."
+)
 
 uploaded_file = st.file_uploader(
     "Загрузите .md файл",

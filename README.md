@@ -2,6 +2,8 @@
 
 Сервис конвертации Markdown в самодостаточный HTML (через GitHub API).
 
+Текущая версия: `0.1.0`
+
 Часто нужен адекватно (минималистично) выглядящий HTML из Markdown. HTML получем через открытый API GitHub, а стили просто захардкожены в шаблоне.
 
 ![Streamlit UI](screen.png)
@@ -50,4 +52,30 @@ curl -X POST http://localhost:8000/convert \
 
 ```bash
 curl http://localhost:8000/health
+```
+
+`GET /version`
+
+```bash
+curl http://localhost:8000/version
+```
+
+## Релизы
+
+Проект использует Semantic Versioning. Текущая версия хранится в файле `VERSION`, история изменений ведётся в `CHANGELOG.md`.
+
+Чтобы выпустить релиз:
+
+```bash
+git add VERSION CHANGELOG.md
+git commit -m "Release v0.1.0"
+git tag v0.1.0
+git push origin main --tags
+gh release create v0.1.0 --notes-file CHANGELOG.md
+```
+
+После публикации релиза GitHub Actions автоматически собирает Docker-образ и публикует его в GitHub Container Registry:
+
+```bash
+docker pull ghcr.io/fserg/md-to-html:v0.1.0
 ```
