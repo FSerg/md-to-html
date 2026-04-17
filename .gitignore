@@ -1,0 +1,17 @@
+.DS_Store
+
+# Local tooling state
+.agents/
+.claude/
+.review-sandboxes/
+
+# Python environment and caches
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+
+# Local markdown workspace
+md/

@@ -1,0 +1,10 @@
+.git
+.DS_Store
+.claude/
+.agents/
+.review-sandboxes/
+md/*.html
+__pycache__/
+*.pyc
+venv/
+.venv/
