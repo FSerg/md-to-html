@@ -1,0 +1,1 @@
+Use ~~old~~ new output.

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Document</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --page-bg: #f8fafc;
+      --surface: #ffffff;
+      --border: #e2e8f0;
+      --border-strong: #cbd5e1;
+      --text: #0f172a;
+      --muted: #475569;
+      --code-bg: #f1f5f9;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --quote-bg: #eff6ff;
+      --quote-border: #93c5fd;
+      --shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: linear-gradient(180deg, #f8fafc 0%, #eef2ff 100%);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      line-height: 1.7;
+      padding: 24px 16px 40px;
+    }
+
+    .document {
+      max-width: 960px;
+      margin: 0 auto;
+      background: var(--surface);
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 20px;
+      box-shadow: var(--shadow);
+      padding: 48px 56px;
+    }
+
+    .document > :first-child {
+      margin-top: 0;
+    }
+
+    .document h1,
+    .document h2,
+    .document h3,
+    .document h4,
+    .document h5,
+    .document h6 {
+      color: var(--text);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+      margin: 1.75rem 0 0.85rem;
+      position: relative;
+      scroll-margin-top: 2rem;
+    }
+
+    .document h1 {
+      border-bottom: 1px solid var(--border);
+      font-size: 2.4rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .document h2 {
+      border-bottom: 1px solid var(--border);
+      font-size: 1.85rem;
+      padding-bottom: 0.45rem;
+    }
+
+    .document h3 {
+      font-size: 1.45rem;
+    }
+
+    .document h4 {
+      font-size: 1.2rem;
+    }
+
+    .document h5,
+    .document h6 {
+      font-size: 1rem;
+    }
+
+    .document .heading-anchor {
+      color: var(--muted);
+      float: left;
+      margin-left: -1.25em;
+      opacity: 0;
+      padding-right: 0.3em;
+      text-decoration: none;
+      transition: opacity 0.18s ease;
+      user-select: none;
+    }
+
+    .document h1:hover .heading-anchor,
+    .document h2:hover .heading-anchor,
+    .document h3:hover .heading-anchor,
+    .document h4:hover .heading-anchor,
+    .document h5:hover .heading-anchor,
+    .document h6:hover .heading-anchor,
+    .document .heading-anchor:focus {
+      opacity: 0.65;
+    }
+
+    .document p,
+    .document ul,
+    .document ol,
+    .document blockquote,
+    .document table,
+    .document pre,
+    .document hr {
+      margin: 0 0 1rem;
+    }
+
+    .document ul,
+    .document ol {
+      padding-left: 1.7rem;
+    }
+
+    .document li + li {
+      margin-top: 0.3rem;
+    }
+
+    .document li > p {
+      margin-bottom: 0.5rem;
+    }
+
+    .document a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-thickness: 0.08em;
+      text-underline-offset: 0.15em;
+    }
+
+    .document a:hover {
+      color: var(--accent-hover);
+    }
+
+    .document strong {
+      font-weight: 700;
+    }
+
+    .document em {
+      font-style: italic;
+    }
+
+    .document del {
+      color: var(--muted);
+      text-decoration-thickness: 0.08em;
+    }
+
+    .document blockquote {
+      background: var(--quote-bg);
+      border-left: 4px solid var(--quote-border);
+      border-radius: 0 12px 12px 0;
+      color: var(--muted);
+      padding: 1rem 1.2rem;
+    }
+
+    .document hr {
+      border: 0;
+      border-top: 1px solid var(--border);
+    }
+
+    .document code {
+      background: var(--code-bg);
+      border: 1px solid rgba(148, 163, 184, 0.18);
+      border-radius: 8px;
+      font-family: "SFMono-Regular", SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+      font-size: 0.9em;
+      padding: 0.15em 0.4em;
+    }
+
+    .document pre {
+      background: #0f172a;
+      border-radius: 16px;
+      color: #e2e8f0;
+      overflow-x: auto;
+      padding: 1rem 1.1rem;
+    }
+
+    .document pre code {
+      background: transparent;
+      border: 0;
+      color: inherit;
+      display: block;
+      font-size: 0.92rem;
+      line-height: 1.6;
+      padding: 0;
+      white-space: pre;
+    }
+
+    .document img {
+      border: 1px solid rgba(148, 163, 184, 0.22);
+      border-radius: 14px;
+      display: block;
+      height: auto;
+      max-width: 100%;
+    }
+
+    .document table {
+      border-collapse: collapse;
+      display: block;
+      overflow-x: auto;
+      width: 100%;
+    }
+
+    .document th,
+    .document td {
+      border: 1px solid var(--border);
+      padding: 0.65rem 0.8rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .document th {
+      background: #f8fafc;
+      font-weight: 700;
+    }
+
+    .document tr:nth-child(even) td {
+      background: rgba(248, 250, 252, 0.7);
+    }
+
+    .document .task-list-item {
+      list-style: none;
+      margin-left: -1.55rem;
+      padding-left: 1.55rem;
+    }
+
+    .document .task-list-item input[type="checkbox"] {
+      accent-color: var(--accent);
+      margin-right: 0.5rem;
+      pointer-events: none;
+      transform: translateY(1px);
+    }
+
+    .document .footnotes {
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 2rem;
+      padding-top: 1rem;
+    }
+
+    .document .footnotes ol {
+      margin-bottom: 0;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px 10px 28px;
+      }
+
+      .document {
+        border-radius: 16px;
+        padding: 28px 20px;
+      }
+
+      .document h1 {
+        font-size: 2rem;
+      }
+
+      .document h2 {
+        font-size: 1.55rem;
+      }
+
+      .document h3 {
+        font-size: 1.3rem;
+      }
+
+      .document .heading-anchor {
+        margin-left: -1.05em;
+      }
+
+      .document th,
+      .document td {
+        min-width: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="document">
+    <h1>Document</h1>
+    <ul>
+<li><input checked="" disabled="" type="checkbox"> Ship phase 2</li>
+<li><input disabled="" type="checkbox"> Review output</li>
+</ul>
+
+  </main>
+</body>
+</html>
