@@ -1,0 +1,8 @@
+root = "."
+tmp_dir = "tmp"
+
+[build]
+cmd = "go build -o tmp/md-to-html ./cmd/md-to-html"
+bin = "tmp/md-to-html serve"
+exclude_dir = ["archive", "tmp", "bin", "web/static/dist", "node_modules", ".review-sandboxes", ".git"]
+include_ext = ["go", "templ", "html"]
