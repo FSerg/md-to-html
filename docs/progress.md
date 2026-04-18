@@ -16,7 +16,7 @@
 | 4  | [UI на templUI](phases/phase-4-ui.md)                | ✅ done       | 2026-04-18 | 2026-04-18 | d6aef55   |         |
 | 5  | [CLI-подкоманда](phases/phase-5-cli.md)              | ✅ done       | 2026-04-18 | 2026-04-18 | 6aa19fe   |         |
 | 6  | [Docker + CI](phases/phase-6-docker-ci.md)           | ✅ done       | 2026-04-18 | 2026-04-18 | 4b55661   | Tailwind standalone pinned to `v3.4.17`: `latest` did not emit `web/static/dist/app.css` for the current build pipeline. |
-| 7  | [Документация + v0.2.0](phases/phase-7-docs.md)      | 🔄 in_progress | 2026-04-18 | —          | 66ca056   | `v0.2.0` tag remains failed in remote history; phase continues via patch release `v0.2.1` after fixing lowercase GHCR tags in `release.yml`. |
+| 7  | [Документация + v0.2.0](phases/phase-7-docs.md)      | ✅ done       | 2026-04-18 | 2026-04-18 | a905198   | `v0.2.0` remained as failed tag history after the initial GHCR naming bug; phase completed via patch release `v0.2.1` after lowercasing image tags in `release.yml`. |
 
 Легенда статусов:
 - ⏳ `pending` — не начата
