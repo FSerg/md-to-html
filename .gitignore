@@ -16,3 +16,18 @@ __pycache__/
 # Local markdown workspace
 md/
 docs/
+
+# Go
+/md-to-html
+/bin/
+/dist/
+/tmp/
+*.test
+*.out
+
+# Web build artifacts
+/web/static/dist/
+/node_modules/
+
+# Air live-reload
+.air.log

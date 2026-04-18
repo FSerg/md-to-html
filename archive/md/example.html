@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Проект 1С УНФ 3.0</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+            line-height: 1.45;
+            color: #1a1a1a;
+            background: #fafafa;
+            padding: 16px 12px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 50px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+        }
+
+        .markdown-heading {
+            margin-top: 10px;
+            margin-bottom: 5px;
+            position: relative;
+        }
+
+        .markdown-heading:first-child {
+            margin-top: 0;
+        }
+
+        .heading-element {
+            font-weight: 600;
+            letter-spacing: -0.02em;
+            color: #0a0a0a;
+        }
+
+        h2.heading-element {
+            font-size: 28px;
+            border-bottom: 1px solid #e5e5e5;
+            padding-bottom: 4px;
+            margin-bottom: 6px;
+        }
+
+        h3.heading-element {
+            font-size: 20px;
+            margin-bottom: 6px;
+        }
+
+        .anchor {
+            text-decoration: none;
+            color: inherit;
+            opacity: 0;
+            transition: opacity 0.2s;
+            margin-left: 8px;
+        }
+
+        .markdown-heading:hover .anchor {
+            opacity: 0.5;
+        }
+
+        .anchor:hover {
+            opacity: 1 !important;
+        }
+
+        p {
+            margin-bottom: 8px;
+            color: #2a2a2a;
+        }
+
+        ul,
+        ol {
+            margin-bottom: 8px;
+            padding-left: 20px;
+        }
+
+        li {
+            margin-bottom: 2px;
+            color: #2a2a2a;
+        }
+
+        code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Monaco', 'Consolas', 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #525252;
+            border: 1px solid #e8e8e8;
+        }
+
+        strong {
+            font-weight: 600;
+            color: #0a0a0a;
+        }
+
+        a {
+            color: #2563eb;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        a:hover {
+            color: #1d4ed8;
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px 10px;
+            }
+
+            .container {
+                padding: 28px 20px;
+            }
+
+            h2.heading-element {
+                font-size: 24px;
+            }
+
+            h3.heading-element {
+                font-size: 18px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="markdown-heading">
+            <h2 class="heading-element">Проект 1С Управление нашей фирмой (УНФ) 3.0 с доработками в расширениях
+                конфигурации
+            </h2><a id="user-content-проект-1с-управление-нашей-фирмой-унф-30-с-доработками-в-расширениях-конфигурации"
+                class="anchor"
+                aria-label="Permalink: Проект 1С Управление нашей фирмой (УНФ) 3.0 с доработками в расширениях конфигурации"
+                href="#проект-1с-управление-нашей-фирмой-унф-30-с-доработками-в-расширениях-конфигурации"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>
+        </div>
+        <div class="markdown-heading">
+            <h3 class="heading-element">Основная кодовая база</h3><a id="user-content-основная-кодовая-база"
+                class="anchor" aria-label="Permalink: Основная кодовая база" href="#основная-кодовая-база"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>
+        </div>
+        <ul>
+            <li>Исходный код основной конфигурации 1С Управление нашей фирмой (УТ) 3.0.12.146:
+                <code>1c-src/Configuration</code>
+            </li>
+        </ul>
+        <div class="markdown-heading">
+            <h3 class="heading-element">Расширения конфигурации</h3><a id="user-content-расширения-конфигурации"
+                class="anchor" aria-label="Permalink: Расширения конфигурации" href="#расширения-конфигурации"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>
+        </div>
+        <ul>
+            <li>расширение конфигурации АПРО_Доработки <code>1c-src/ExtensionsXML/АПРО_Доработки</code> с доработками
+                функционала по рабочему месту кассиров (РМК) и части документов</li>
+        </ul>
+        <div class="markdown-heading">
+            <h2 class="heading-element">Окружение разработки</h2><a id="user-content-окружение-разработки"
+                class="anchor" aria-label="Permalink: Окружение разработки" href="#окружение-разработки"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>
+        </div>
+        <ul>
+            <li>Разработка ведется в операционной системе Ubuntu 24.04 с использованием платформы 1С:Предприятие
+                8.3.27.1688 и
+                конфигуратора 1С:Предприятие.</li>
+            <li>В системе доступен Python 3.12.</li>
+            <li>Агентские возможности нужно запускать учитывая особенности консоли на Bash.</li>
+        </ul>
+        <div class="markdown-heading">
+            <h2 class="heading-element">MCP-серверы и когда их вызывать</h2><a
+                id="user-content-mcp-серверы-и-когда-их-вызывать" class="anchor"
+                aria-label="Permalink: MCP-серверы и когда их вызывать" href="#mcp-серверы-и-когда-их-вызывать"><span
+                    aria-hidden="true" class="octicon octicon-link"></span></a>
+        </div>
+        <div class="markdown-heading">
+            <h3 class="heading-element">1с-metadata (MCP)</h3><a id="user-content-1с-metadata-mcp" class="anchor"
+                aria-label="Permalink: 1с-metadata (MCP)" href="#1с-metadata-mcp"><span aria-hidden="true"
+                    class="octicon octicon-link"></span></a>
+        </div>
+        <p><strong>Назначение:</strong> быстрый поиск описаний объектов конфигурации (структуры метаданных).
+            <strong>Жёсткий порядок работы:</strong>
+        </p>
+        <ol>
+            <li>
+                <code>search_metadata(query[, object_type])</code> → топ-K совпадений (как минимум: <code>id</code>,
+                <code>name</code>, иногда <code>type</code>, <code>score</code>).
+            </li>
+            <li>Выбираешь релевантный результат и вызываешь <code>metadata_details_by_id(id)</code> → подробности по
+                объекту.
+            </li>
+        </ol>
+        <p><strong>Использовать, когда:</strong></p>
+        <ul>
+            <li>нужно понять, существуют ли документ/справочник/регистр и как они называются;</li>
+            <li>требуется структура объекта, реквизиты, измерения, ресурсы, табличные части и т.п.;</li>
+            <li>нужно уточнить корректные имена метаданных перед написанием запроса/кода.</li>
+        </ul>
+    </div>
+</body>
+
+</html>
