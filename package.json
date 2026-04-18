@@ -1,0 +1,7 @@
+{
+  "name": "md-to-html",
+  "private": true,
+  "devDependencies": {
+    "tailwindcss": "3.4.17"
+  }
+}

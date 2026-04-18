@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"encoding/json"
 	"io"
+	"mime/multipart"
 	"net/http"
 	"net/http/httptest"
+	"net/textproto"
 	"strings"
 	"testing"
 	"time"
@@ -190,6 +192,201 @@ func TestStatusEndpoints(t *testing.T) {
 	}
 }
 
+func TestHomePage(t *testing.T) {
+	t.Parallel()
+
+	srv := newTestServer(t, defaultTestConfig())
+	ts := httptest.NewServer(srv.Router())
+	defer ts.Close()
+
+	resp, err := ts.Client().Get(ts.URL + "/")
+	if err != nil {
+		t.Fatalf("get home: %v", err)
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("read home body: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want %d", resp.StatusCode, http.StatusOK)
+	}
+	if got := resp.Header.Get("Content-Type"); got != "text/html; charset=utf-8" {
+		t.Fatalf("content-type = %q, want %q", got, "text/html; charset=utf-8")
+	}
+	for _, needle := range []string{
+		`hx-post="/ui/convert"`,
+		`id="result"`,
+		`value="file"`,
+		`value="text"`,
+	} {
+		if !bytes.Contains(body, []byte(needle)) {
+			t.Fatalf("home body missing %q", needle)
+		}
+	}
+}
+
+func TestUIConvertWithText(t *testing.T) {
+	t.Parallel()
+
+	srv := newTestServer(t, defaultTestConfig())
+	ts := httptest.NewServer(srv.Router())
+	defer ts.Close()
+
+	body, contentType := newMultipartRequest(t, map[string]string{
+		"source":        "text",
+		"markdown_text": "# Привет мир\n\nТекст",
+	}, nil)
+
+	req, err := http.NewRequest(http.MethodPost, ts.URL+"/ui/convert", bytes.NewReader(body))
+	if err != nil {
+		t.Fatalf("new request: %v", err)
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := ts.Client().Do(req)
+	if err != nil {
+		t.Fatalf("do request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("read response: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want %d; body=%s", resp.StatusCode, http.StatusOK, respBody)
+	}
+	for _, needle := range []string{
+		"Открыть превью",
+		"Скачать HTML",
+		`/preview/`,
+		`/download/`,
+		`srcdoc=`,
+		`document.html`,
+	} {
+		if !bytes.Contains(respBody, []byte(needle)) {
+			t.Fatalf("response missing %q", needle)
+		}
+	}
+}
+
+func TestUIConvertWithFile(t *testing.T) {
+	t.Parallel()
+
+	srv := newTestServer(t, defaultTestConfig())
+	ts := httptest.NewServer(srv.Router())
+	defer ts.Close()
+
+	body, contentType := newMultipartRequest(t, map[string]string{
+		"source": "file",
+	}, map[string]filePart{
+		"markdown_file": {
+			filename: "guide.md",
+			content:  "# Guide\n\nBody",
+		},
+	})
+
+	req, err := http.NewRequest(http.MethodPost, ts.URL+"/ui/convert", bytes.NewReader(body))
+	if err != nil {
+		t.Fatalf("new request: %v", err)
+	}
+	req.Header.Set("Content-Type", contentType)
+
+	resp, err := ts.Client().Do(req)
+	if err != nil {
+		t.Fatalf("do request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	respBody, err := io.ReadAll(resp.Body)
+	if err != nil {
+		t.Fatalf("read response: %v", err)
+	}
+
+	if resp.StatusCode != http.StatusOK {
+		t.Fatalf("status = %d, want %d; body=%s", resp.StatusCode, http.StatusOK, respBody)
+	}
+	if !bytes.Contains(respBody, []byte("guide.html")) {
+		t.Fatalf("response missing filename; body=%s", respBody)
+	}
+}
+
+func TestUIConvertErrors(t *testing.T) {
+	t.Parallel()
+
+	srv := newTestServer(t, Config{
+		Addr:             ":0",
+		MaxMarkdownBytes: 8,
+		MaxRequestBytes:  1024,
+		PreviewTTL:       time.Hour,
+		ShutdownTimeout:  time.Second,
+	})
+	ts := httptest.NewServer(srv.Router())
+	defer ts.Close()
+
+	tests := []struct {
+		name       string
+		fields     map[string]string
+		files      map[string]filePart
+		wantStatus int
+		wantBody   string
+	}{
+		{
+			name:       "empty text",
+			fields:     map[string]string{"source": "text", "markdown_text": "   "},
+			wantStatus: http.StatusBadRequest,
+			wantBody:   "Пустой markdown",
+		},
+		{
+			name:       "missing file",
+			fields:     map[string]string{"source": "file"},
+			wantStatus: http.StatusBadRequest,
+			wantBody:   "Файл не загружен",
+		},
+		{
+			name:       "markdown too large",
+			fields:     map[string]string{"source": "text", "markdown_text": strings.Repeat("x", 9)},
+			wantStatus: http.StatusRequestEntityTooLarge,
+			wantBody:   "Markdown больше 8 байт",
+		},
+	}
+
+	for _, tc := range tests {
+		tc := tc
+		t.Run(tc.name, func(t *testing.T) {
+			body, contentType := newMultipartRequest(t, tc.fields, tc.files)
+
+			req, err := http.NewRequest(http.MethodPost, ts.URL+"/ui/convert", bytes.NewReader(body))
+			if err != nil {
+				t.Fatalf("new request: %v", err)
+			}
+			req.Header.Set("Content-Type", contentType)
+
+			resp, err := ts.Client().Do(req)
+			if err != nil {
+				t.Fatalf("do request: %v", err)
+			}
+			defer resp.Body.Close()
+
+			respBody, err := io.ReadAll(resp.Body)
+			if err != nil {
+				t.Fatalf("read response: %v", err)
+			}
+
+			if resp.StatusCode != tc.wantStatus {
+				t.Fatalf("status = %d, want %d; body=%s", resp.StatusCode, tc.wantStatus, respBody)
+			}
+			if !bytes.Contains(respBody, []byte(tc.wantBody)) {
+				t.Fatalf("response %q missing %q", respBody, tc.wantBody)
+			}
+		})
+	}
+}
+
 func TestPreviewAndDownloadOneShot(t *testing.T) {
 	t.Parallel()
 
@@ -326,4 +523,42 @@ func defaultTestConfig() Config {
 		PreviewTTL:       time.Hour,
 		ShutdownTimeout:  time.Second,
 	}
+}
+
+type filePart struct {
+	filename string
+	content  string
+}
+
+func newMultipartRequest(t *testing.T, fields map[string]string, files map[string]filePart) ([]byte, string) {
+	t.Helper()
+
+	var buf bytes.Buffer
+	writer := multipart.NewWriter(&buf)
+
+	for name, value := range fields {
+		if err := writer.WriteField(name, value); err != nil {
+			t.Fatalf("write field %s: %v", name, err)
+		}
+	}
+
+	for name, file := range files {
+		header := textproto.MIMEHeader{}
+		header.Set("Content-Disposition", `form-data; name="`+name+`"; filename="`+file.filename+`"`)
+		header.Set("Content-Type", "text/markdown")
+
+		part, err := writer.CreatePart(header)
+		if err != nil {
+			t.Fatalf("create part %s: %v", name, err)
+		}
+		if _, err := io.WriteString(part, file.content); err != nil {
+			t.Fatalf("write part %s: %v", name, err)
+		}
+	}
+
+	if err := writer.Close(); err != nil {
+		t.Fatalf("close multipart writer: %v", err)
+	}
+
+	return buf.Bytes(), writer.FormDataContentType()
 }

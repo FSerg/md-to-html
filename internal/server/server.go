@@ -4,12 +4,14 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"io/fs"
 	"log/slog"
 	"net/http"
 	"os"
 	"time"
 
 	"github.com/fserg/md-to-html/internal/converter"
+	"github.com/fserg/md-to-html/web"
 	"github.com/go-chi/chi/v5"
 	chimiddleware "github.com/go-chi/chi/v5/middleware"
 )
@@ -48,6 +50,9 @@ func (s *Server) Router() http.Handler {
 	r.Post("/ui/convert", s.handleUIConvert)
 	r.Get("/preview/{id}", s.handlePreview)
 	r.Get("/download/{id}", s.handleDownload)
+	if staticFS, err := fs.Sub(web.StaticFS, "static"); err == nil {
+		r.Handle("/static/*", http.StripPrefix("/static/", http.FileServerFS(staticFS)))
+	}
 
 	return r
 }

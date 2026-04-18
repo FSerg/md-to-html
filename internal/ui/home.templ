@@ -1,0 +1,158 @@
+package ui
+
+import (
+	"github.com/fserg/md-to-html/internal/ui/components/button"
+	"github.com/fserg/md-to-html/internal/ui/components/card"
+)
+
+templ Home() {
+	@Layout("Markdown → HTML") {
+		<div class="panel-grid">
+			<section class="space-y-6">
+				<div class="space-y-4">
+					<div class="eyebrow">
+						<span>Go migration</span>
+						<span>goldmark + templUI</span>
+					</div>
+					<div class="space-y-3">
+						<h1 class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
+							Markdown → HTML без внешних зависимостей в результирующем документе.
+						</h1>
+						<p class="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
+							Загрузите `.md`-файл или вставьте текст вручную. Сервис отдаст автономный HTML, одноразовое превью и отдельную ссылку на скачивание.
+						</p>
+					</div>
+				</div>
+				<div class="grid gap-4 sm:grid-cols-3">
+					<div class="section-card p-4">
+						<div class="text-sm font-semibold text-foreground">Самодостаточный HTML</div>
+						<p class="mt-2 text-sm leading-6 text-muted-foreground">Результат открывается локально без CDN и без сетевых вызовов.</p>
+					</div>
+					<div class="section-card p-4">
+						<div class="text-sm font-semibold text-foreground">Одноразовые ссылки</div>
+						<p class="mt-2 text-sm leading-6 text-muted-foreground">Preview и download живут до первого открытия или максимум один час.</p>
+					</div>
+					<div class="section-card p-4">
+						<div class="text-sm font-semibold text-foreground">Русский интерфейс</div>
+						<p class="mt-2 text-sm leading-6 text-muted-foreground">Форма ориентирована на быстрый ручной прогон документации и заметок.</p>
+					</div>
+				</div>
+			</section>
+			<section>
+				@card.Card(card.Props{Class: "section-card overflow-hidden"}) {
+					@card.Header(card.HeaderProps{Class: "space-y-2 border-b border-border/70 pb-6"}) {
+						<div class="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">Конвертация</div>
+						@card.Title(card.TitleProps{Class: "text-2xl font-semibold tracking-tight text-foreground"}) {
+							Выберите источник Markdown
+						}
+						@card.Description(card.DescriptionProps{Class: "max-w-xl text-sm leading-6 text-muted-foreground"}) {
+							Форма отправляется через HTMX на `POST /ui/convert`, а результат подменяется прямо в блоке ниже.
+						}
+					}
+					@card.Content(card.ContentProps{Class: "space-y-5"}) {
+						<form
+							id="convert-form"
+							hx-post="/ui/convert"
+							hx-target="#result"
+							hx-swap="innerHTML"
+							hx-encoding="multipart/form-data"
+							class="space-y-5"
+						>
+							<div class="space-y-2">
+								<div class="field-label">Источник</div>
+								<div class="grid grid-cols-2 gap-2 rounded-[1.35rem] border border-border/80 bg-muted/55 p-2">
+									<label
+										class="source-tab source-tab-active"
+										data-source-tab="file"
+										data-active-classes="source-tab source-tab-active"
+										data-inactive-classes="source-tab"
+									>
+										<input
+											type="radio"
+											name="source"
+											value="file"
+											class="sr-only"
+											checked
+											onchange="window.mdToHTMLSwitchSource(this.value)"
+										/>
+										Файл
+									</label>
+									<label
+										class="source-tab"
+										data-source-tab="text"
+										data-active-classes="source-tab source-tab-active"
+										data-inactive-classes="source-tab"
+									>
+										<input
+											type="radio"
+											name="source"
+											value="text"
+											class="sr-only"
+											onchange="window.mdToHTMLSwitchSource(this.value)"
+										/>
+										Текст
+									</label>
+								</div>
+							</div>
+							<div id="source-file" class="source-panel space-y-3">
+								<label class="field-label" for="markdown-file">Markdown-файл</label>
+								<input
+									id="markdown-file"
+									class="surface-input file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90"
+									type="file"
+									name="markdown_file"
+									accept=".md,.markdown,.mdown,text/markdown"
+								/>
+								<p class="field-hint">Используйте для загрузки существующего документа. Имя файла станет базой для имени HTML.</p>
+							</div>
+							<div id="source-text" class="source-panel hidden space-y-3">
+								<label class="field-label" for="markdown-text">Markdown-текст</label>
+								<textarea
+									id="markdown-text"
+									class="surface-textarea"
+									name="markdown_text"
+									rows="14"
+									placeholder="# Привет, мир&#10;&#10;- списки&#10;- таблицы&#10;- код"
+								></textarea>
+								<p class="field-hint">Подходит для быстрых заметок и вставок без промежуточного файла.</p>
+							</div>
+							<div class="flex flex-wrap items-center gap-3">
+								@button.Button(button.Props{
+									Type:    button.TypeSubmit,
+									Class:   "rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90",
+									Variant: button.VariantDefault,
+									Size:    button.SizeDefault,
+								}) {
+									<span>Конвертировать</span>
+								}
+								<span class="field-hint">Лимиты тела запроса и markdown берутся из server config.</span>
+							</div>
+						</form>
+						<div id="result" class="min-h-[4rem]"></div>
+					}
+				}
+			</section>
+		</div>
+		<script>
+			window.mdToHTMLSwitchSource = function(value) {
+				const filePanel = document.getElementById("source-file");
+				const textPanel = document.getElementById("source-text");
+				if (!filePanel || !textPanel) {
+					return;
+				}
+
+				const showFile = value === "file";
+				filePanel.classList.toggle("hidden", !showFile);
+				textPanel.classList.toggle("hidden", showFile);
+
+				document.querySelectorAll("[data-source-tab]").forEach((tab) => {
+					const tabValue = tab.getAttribute("data-source-tab");
+					const active = tabValue === value;
+					tab.className = active
+						? tab.getAttribute("data-active-classes")
+						: tab.getAttribute("data-inactive-classes");
+				});
+			};
+		</script>
+	}
+}

@@ -1,0 +1,87 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: light;
+  }
+
+  html {
+    background:
+      radial-gradient(circle at top left, rgba(234, 215, 176, 0.55), transparent 34rem),
+      radial-gradient(circle at top right, rgba(184, 92, 56, 0.14), transparent 24rem),
+      linear-gradient(180deg, #fbf7ef 0%, #f3eadb 100%);
+  }
+
+  body {
+    @apply min-h-screen bg-transparent font-sans text-foreground antialiased;
+  }
+
+  a {
+    @apply transition-colors;
+  }
+
+  ::selection {
+    background: rgba(184, 92, 56, 0.18);
+  }
+}
+
+@layer components {
+  .app-shell {
+    @apply mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8;
+  }
+
+  .hero-panel {
+    @apply relative overflow-hidden rounded-[2rem] border border-border/70 bg-card/95 shadow-xl shadow-stone-900/5 backdrop-blur;
+  }
+
+  .hero-panel::before {
+    content: "";
+    @apply absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-secondary/80 via-card to-transparent;
+  }
+
+  .panel-grid {
+    @apply grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(21rem,0.9fr)];
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground;
+  }
+
+  .section-card {
+    @apply rounded-[1.5rem] border border-border/80 bg-card/90 shadow-lg shadow-stone-900/5;
+  }
+
+  .field-label {
+    @apply text-sm font-semibold text-foreground;
+  }
+
+  .field-hint {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .surface-input {
+    @apply block w-full rounded-2xl border border-border bg-background/95 px-4 py-3 text-sm text-foreground shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20;
+  }
+
+  .surface-textarea {
+    @apply surface-input min-h-[18rem] resize-y font-mono leading-6;
+  }
+
+  .source-tab {
+    @apply inline-flex flex-1 cursor-pointer items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold text-muted-foreground transition;
+  }
+
+  .source-tab-active {
+    @apply bg-primary text-primary-foreground shadow-sm;
+  }
+
+  .source-panel {
+    @apply rounded-[1.5rem] border border-dashed border-border/80 bg-background/70 p-4;
+  }
+
+  .result-frame {
+    @apply mt-3 h-[36rem] w-full rounded-[1.25rem] border border-border bg-white shadow-inner;
+  }
+}

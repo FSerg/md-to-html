@@ -1,6 +1,7 @@
 package server
 
 import (
+	"bytes"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -8,9 +9,11 @@ import (
 	"log/slog"
 	"mime"
 	"net/http"
+	"path/filepath"
 	"strings"
 
 	"github.com/fserg/md-to-html/internal/converter"
+	"github.com/fserg/md-to-html/internal/ui"
 	"github.com/fserg/md-to-html/internal/version"
 	"github.com/go-chi/chi/v5"
 )
@@ -69,37 +72,38 @@ func (s *Server) handleReady(w http.ResponseWriter, _ *http.Request) {
 	})
 }
 
-func (s *Server) handleHome(w http.ResponseWriter, _ *http.Request) {
-	w.Header().Set("Content-Type", "text/plain; charset=utf-8")
+func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte("UI coming in phase 4"))
+	_ = ui.Home().Render(r.Context(), w)
 }
 
 func (s *Server) handleUIConvert(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		s.writeDecodeError(w, err)
+	r.Body = http.MaxBytesReader(w, r.Body, s.cfg.MaxRequestBytes)
+	if err := r.ParseMultipartForm(s.cfg.MaxRequestBytes); err != nil {
+		s.renderUIError(w, r, http.StatusRequestEntityTooLarge, "Слишком большой файл или ошибка формы")
 		return
 	}
 
-	result, err := s.convertMarkdown(r.Form.Get("markdown"), r.Form.Get("title"))
+	md, filename, err := s.readUIMarkdownPayload(r)
 	if err != nil {
-		s.writeConvertError(w, err)
+		s.renderUIReadError(w, r, err)
 		return
 	}
 
-	filename := htmlFilename(result.Title)
+	result, err := s.conv.Convert(md, defaultDocumentTitle)
+	if err != nil {
+		s.log.Error("ui_convert_failed", "error", err)
+		s.renderUIError(w, r, http.StatusBadGateway, "Ошибка конвертации: "+err.Error())
+		return
+	}
+
 	previewID := s.store.Put(result.HTML, "text/html; charset=utf-8", filename)
 	downloadID := s.store.Put(result.HTML, "text/html; charset=utf-8", filename)
 
-	fragment := fmt.Sprintf(
-		`<div><p>Result ready</p><a href="/preview/%s" target="_blank" rel="noopener">Preview</a> <a href="/download/%s">Download</a></div>`,
-		previewID,
-		downloadID,
-	)
-
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_, _ = w.Write([]byte(fragment))
+	_ = ui.Result(previewID, downloadID, string(result.HTML), filename).Render(r.Context(), w)
 }
 
 func (s *Server) handlePreview(w http.ResponseWriter, r *http.Request) {
@@ -235,6 +239,65 @@ func contentTypeOrDefault(value string) string {
 		return "text/html; charset=utf-8"
 	}
 	return value
+}
+
+func (s *Server) renderUIError(w http.ResponseWriter, r *http.Request, status int, msg string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(status)
+	_ = ui.Error(msg).Render(r.Context(), w)
+}
+
+func (s *Server) renderUIReadError(w http.ResponseWriter, r *http.Request, err error) {
+	var markdownTooLarge errMarkdownTooLarge
+
+	switch {
+	case errors.Is(err, errEmptyMarkdown):
+		s.renderUIError(w, r, http.StatusBadRequest, "Пустой markdown")
+	case errors.As(err, &markdownTooLarge):
+		s.renderUIError(w, r, http.StatusRequestEntityTooLarge, fmt.Sprintf("Markdown больше %d байт", s.cfg.MaxMarkdownBytes))
+	default:
+		s.renderUIError(w, r, http.StatusBadRequest, err.Error())
+	}
+}
+
+func (s *Server) readUIMarkdownPayload(r *http.Request) ([]byte, string, error) {
+	switch r.FormValue("source") {
+	case "", "file":
+		file, header, err := r.FormFile("markdown_file")
+		if err != nil {
+			return nil, "", errors.New("Файл не загружен")
+		}
+		defer file.Close()
+
+		markdown, err := io.ReadAll(io.LimitReader(file, s.cfg.MaxMarkdownBytes+1))
+		if err != nil {
+			return nil, "", fmt.Errorf("не удалось прочитать файл: %w", err)
+		}
+		if err := validateMarkdown(markdown, s.cfg.MaxMarkdownBytes); err != nil {
+			return nil, "", err
+		}
+
+		name := strings.TrimSpace(strings.TrimSuffix(header.Filename, filepath.Ext(header.Filename)))
+		return markdown, htmlFilename(name), nil
+	case "text":
+		markdown := []byte(r.FormValue("markdown_text"))
+		if err := validateMarkdown(markdown, s.cfg.MaxMarkdownBytes); err != nil {
+			return nil, "", err
+		}
+		return markdown, "document.html", nil
+	default:
+		return nil, "", errors.New("Неизвестный источник markdown")
+	}
+}
+
+func validateMarkdown(markdown []byte, limit int64) error {
+	if int64(len(markdown)) > limit {
+		return errMarkdownTooLarge{limit: limit}
+	}
+	if len(bytes.TrimSpace(markdown)) == 0 {
+		return errEmptyMarkdown
+	}
+	return nil
 }
 
 var errEmptyMarkdown = errors.New("markdown must not be empty")
