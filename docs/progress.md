@@ -10,7 +10,7 @@
 | #  | Фаза                                                | Статус       | Начата     | Завершена  | Commit/PR | Заметки |
 |----|------------------------------------------------------|--------------|------------|------------|-----------|---------|
 | 0  | [Архивирование Python](phases/phase-0-archive.md)    | ✅ done       | 2026-04-18 | 2026-04-18 | 425eae7   |         |
-| 1  | [Go-скелет](phases/phase-1-skeleton.md)              | 🔄 in_progress | 2026-04-18 | —          | —         |         |
+| 1  | [Go-скелет](phases/phase-1-skeleton.md)              | ✅ done       | 2026-04-18 | 2026-04-18 | 6b8d588   |         |
 | 2  | [Converter (goldmark)](phases/phase-2-converter.md)  | ⏳ pending    | —          | —          | —         |         |
 | 3  | [HTTP-сервер](phases/phase-3-server.md)              | ⏳ pending    | —          | —          | —         |         |
 | 4  | [UI на templUI](phases/phase-4-ui.md)                | ⏳ pending    | —          | —          | —         |         |
