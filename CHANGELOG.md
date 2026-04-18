@@ -4,6 +4,28 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the project uses Semantic Versioning.
 
+## [0.2.0] - 2026-04-18
+
+### Changed
+
+- **BREAKING**: project fully rewritten in Go (goldmark + templUI); Python implementation moved to `archive/`.
+- **BREAKING**: heading anchors now use ASCII transliteration (`## Установка` → `id="ustanovka"`).
+- **BREAKING**: heading HTML markup simplified; `<div class="markdown-heading">` is no longer emitted.
+- Removed the GitHub Markdown API dependency; conversion now works fully offline.
+- Replaced the two-process runtime (uvicorn + Streamlit) with a single binary.
+- Preview and download links are now one-shot, UUID-backed, and expire after one hour.
+
+### Added
+
+- Syntax highlighting via chroma with inline styles for self-contained HTML output.
+- Footnote support in addition to baseline GFM features.
+- Cross-platform release binaries for `linux/amd64`, `linux/arm64`, and `darwin/arm64`.
+
+### Removed
+
+- `READY_CHECK_GITHUB` environment variable.
+- Streamlit UI on dedicated port `:8501`.
+
 ## [0.1.2] - 2026-04-18
 
 ### Added

@@ -1,81 +1,90 @@
 # md-to-html
 
-Сервис конвертации Markdown в самодостаточный HTML (через GitHub API).
+Сервис конвертации Markdown в самодостаточный HTML. Полностью офлайн, без обращений к внешним API.
 
-Текущая версия: `0.1.2`
+Текущая версия: `0.2.0` (Go + goldmark + templUI)
 
-Часто нужен адекватно (минималистично) выглядящий HTML из Markdown. HTML получем через открытый API GitHub, а стили просто захардкожены в шаблоне.
+## Возможности
 
-![Streamlit UI](screen.png)
+- GFM + footnote + emoji + подсветка кода через chroma.
+- Якоря в заголовках с ASCII-транслитом: `## Установка` → `#ustanovka`.
+- CLI: `md-to-html cli file.md`.
+- HTTP API: `POST /convert` совместим с `v0.1.x`.
+- Web UI на `http://localhost:8080/` с inline-preview в sandbox iframe и одноразовыми ссылками на preview/download.
 
-GITHUB_TOKEN не нужен, если не требуется массовая (поточная) конвертация. Но если нужно, то его можно передать через переменную окружения при запуске.
-
-Есть два интерфейса:
-
-- FastAPI на `http://localhost:8000`
-- Streamlit UI на `http://localhost:8501` с двумя режимами ввода: загрузка `.md` файла или вставка Markdown-текста из буфера обмена
-
-## Локальный запуск
+## Запуск через Docker
 
 ```bash
-uv venv .venv
-source .venv/bin/activate
-uv pip install -r requirements.txt
-uvicorn app.api:app --reload
-streamlit run app/streamlit_app.py
+docker run --rm -p 8080:8080 ghcr.io/fserg/md-to-html:latest
 ```
 
-CLI сохранился:
+## Локальная разработка
+
+Требования: Go 1.23+, `templ` CLI, Node.js для dev-режима Tailwind или standalone `tailwindcss`.
 
 ```bash
-python3 md_to_html.py /path/to/file.md
+go install github.com/a-h/templ/cmd/templ@v0.3.1001
+make tailwind
+make build
+./bin/md-to-html serve
 ```
 
-## Docker
+Для live-reload:
 
 ```bash
-docker build -t md-to-html .
-docker run --rm -p 8000:8000 -p 8501:8501 -e GITHUB_TOKEN=your_token md-to-html
+make dev
 ```
 
-## API
+## CLI
+
+```bash
+md-to-html cli file.md
+md-to-html cli file.md -o out.html
+md-to-html cli --stdin < file.md
+md-to-html cli - --title "Заголовок"
+```
+
+## HTTP API
 
 `POST /convert`
 
 ```bash
-curl -X POST http://localhost:8000/convert \
-  -H 'Content-Type: application/json' \
-  -d '{"markdown":"# Hello"}'
+curl -X POST http://localhost:8080/convert \
+  -H 'content-type: application/json' \
+  -d '{"markdown":"# Привет"}'
 ```
 
-`GET /health`
+Прочие эндпоинты:
 
-```bash
-curl http://localhost:8000/health
-```
+- `GET /` — веб-интерфейс.
+- `GET /health`, `GET /version`, `GET /ready` — служебные эндпоинты.
+- `GET /preview/{id}`, `GET /download/{id}` — одноразовые ссылки из веб-формы.
 
-`GET /version`
+## Env-переменные
 
-```bash
-curl http://localhost:8000/version
-```
+| Переменная           | По умолчанию | Назначение |
+|----------------------|--------------|------------|
+| `ADDR`               | `:8080`      | Адрес прослушивания |
+| `MAX_MARKDOWN_BYTES` | `1048576`    | Лимит размера markdown |
+| `MAX_REQUEST_BYTES`  | `1200000`    | Лимит размера HTTP-запроса |
+| `PREVIEW_TTL`        | `1h`         | TTL одноразовых ссылок |
+
+## Миграция с v0.1.x
+
+- API-контракт `POST /convert` не изменился, существующие клиенты продолжают работать.
+- Якоря заголовков теперь используют ASCII-транслит. Ссылки вида `#установка` нужно заменить на `#ustanovka`.
+- HTML-разметка упрощена: больше нет `<div class="markdown-heading">`, поэтому ручные CSS-оверрайды нужно пересмотреть.
+- Переменная окружения `READY_CHECK_GITHUB` удалена: сервис больше не зависит от внешнего Markdown API.
+- UI работает на том же порту `8080`, отдельный UI-порт `:8501` больше не нужен.
+
+Python-реализация сохранена в `archive/`.
 
 ## Релизы
 
-Проект использует Semantic Versioning. Текущая версия хранится в файле `VERSION`, история изменений ведётся в `CHANGELOG.md`.
-
-Чтобы выпустить релиз:
-
 ```bash
-git add VERSION CHANGELOG.md
-git commit -m "Release v0.1.2"
-git tag v0.1.2
+git commit -am "Release vX.Y.Z"
+git tag vX.Y.Z
 git push origin main --tags
-gh release create v0.1.2 --notes-file CHANGELOG.md
 ```
 
-После публикации релиза GitHub Actions автоматически собирает Docker-образ и публикует его в GitHub Container Registry:
-
-```bash
-docker pull ghcr.io/fserg/md-to-html:v0.1.2
-```
+GitHub Actions публикует Docker-образ для `linux/amd64` и `linux/arm64` в GHCR и прикладывает бинарники для `linux/amd64`, `linux/arm64` и `darwin/arm64` к GitHub Release.
