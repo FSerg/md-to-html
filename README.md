@@ -2,7 +2,7 @@
 
 Сервис конвертации Markdown в самодостаточный HTML (через GitHub API).
 
-Текущая версия: `0.1.1`
+Текущая версия: `0.1.2`
 
 Часто нужен адекватно (минималистично) выглядящий HTML из Markdown. HTML получем через открытый API GitHub, а стили просто захардкожены в шаблоне.
 
@@ -13,7 +13,7 @@ GITHUB_TOKEN не нужен, если не требуется массовая 
 Есть два интерфейса:
 
 - FastAPI на `http://localhost:8000`
-- Streamlit UI на `http://localhost:8501`
+- Streamlit UI на `http://localhost:8501` с двумя режимами ввода: загрузка `.md` файла или вставка Markdown-текста из буфера обмена
 
 ## Локальный запуск
 
@@ -68,14 +68,14 @@ curl http://localhost:8000/version
 
 ```bash
 git add VERSION CHANGELOG.md
-git commit -m "Release v0.1.1"
-git tag v0.1.1
+git commit -m "Release v0.1.2"
+git tag v0.1.2
 git push origin main --tags
-gh release create v0.1.1 --notes-file CHANGELOG.md
+gh release create v0.1.2 --notes-file CHANGELOG.md
 ```
 
 После публикации релиза GitHub Actions автоматически собирает Docker-образ и публикует его в GitHub Container Registry:
 
 ```bash
-docker pull ghcr.io/fserg/md-to-html:v0.1.1
+docker pull ghcr.io/fserg/md-to-html:v0.1.2
 ```

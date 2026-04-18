@@ -149,15 +149,34 @@ if "preview_url" not in st.session_state:
 
 st.title("Markdown → HTML")
 st.caption(
-    f"Версия {__version__}. Загрузите markdown-файл, проверьте превью и скачайте готовый HTML."
+    f"Версия {__version__}. Загрузите markdown-файл или вставьте текст, проверьте превью и скачайте готовый HTML."
 )
 
-uploaded_file = st.file_uploader(
-    "Загрузите .md файл",
-    type=["md", "markdown"],
+input_mode = st.segmented_control(
+    "Источник Markdown",
+    options=["Файл", "Текст"],
+    default="Файл",
 )
+
+uploaded_file = None
+pasted_markdown = ""
+
+if input_mode == "Файл":
+    uploaded_file = st.file_uploader(
+        "Загрузите .md файл",
+        type=["md", "markdown"],
+    )
+else:
+    pasted_markdown = st.text_area(
+        "Вставьте Markdown из буфера обмена",
+        placeholder="# Заголовок\n\nВставьте сюда markdown-текст.",
+        height=260,
+    )
 
 html_result = st.session_state["html_result"]
+is_convert_disabled = (
+    uploaded_file is None if input_mode == "Файл" else not pasted_markdown.strip()
+)
 
 with st.container(border=True):
     action_col, preview_col, download_col = st.columns(
@@ -168,7 +187,7 @@ with st.container(border=True):
     with action_col:
         convert_clicked = st.button(
             "Конвертировать",
-            disabled=uploaded_file is None,
+            disabled=is_convert_disabled,
             type="primary",
             icon=":material/auto_awesome:",
             use_container_width=True,
@@ -213,14 +232,21 @@ with st.container(border=True):
     else:
         st.caption("После конвертации здесь появятся действия с готовым файлом.")
 
-if convert_clicked and uploaded_file is not None:
-    markdown_bytes = uploaded_file.getvalue()
-    markdown_text = markdown_bytes.decode("utf-8")
-    output_name = f"{Path(uploaded_file.name).stem}.html"
+if convert_clicked and not is_convert_disabled:
+    if input_mode == "Файл":
+        markdown_bytes = uploaded_file.getvalue()
+        markdown_text = markdown_bytes.decode("utf-8")
+        fallback_title = Path(uploaded_file.name).stem or "Document"
+        output_name = f"{fallback_title}.html"
+    else:
+        markdown_text = pasted_markdown
+        fallback_title = "Document"
+        output_name = "document.html"
+
     try:
         st.session_state["html_result"] = convert(
             markdown_text,
-            fallback_title=Path(uploaded_file.name).stem or "Document",
+            fallback_title=fallback_title,
         )
         st.session_state["output_name"] = output_name
         st.session_state["preview_url"] = register_preview(st.session_state["html_result"])

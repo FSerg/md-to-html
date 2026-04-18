@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the project uses Semantic Versioning.
 
+## [0.1.2] - 2026-04-18
+
+### Added
+
+- Streamlit UI now supports converting Markdown pasted from the clipboard in addition to uploaded `.md` files.
+
 ## [0.1.1] - 2026-04-17
 
 ### Fixed
