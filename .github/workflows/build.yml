@@ -1,0 +1,108 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    env:
+      TAILWIND_VERSION: v3.4.17
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: true
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+
+      - name: Install tailwindcss standalone
+        run: |
+          curl -fsSL -o /usr/local/bin/tailwindcss \
+            "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          chmod +x /usr/local/bin/tailwindcss
+
+      - name: Build assets
+        run: |
+          mkdir -p web/static/dist
+          templ generate ./...
+          tailwindcss -c tailwind.config.js -i web/static/src/app.css -o web/static/dist/app.css --minify
+
+      - name: Vet
+        run: go vet ./...
+
+      - name: Test
+        run: go test -race ./...
+
+      - name: Build
+        run: |
+          mkdir -p bin
+          CGO_ENABLED=0 go build -trimpath \
+            -ldflags="-s -w -X github.com/fserg/md-to-html/internal/version.Version=$(cat VERSION)" \
+            -o bin/md-to-html ./cmd/md-to-html
+
+  cross-compile:
+    needs: test
+    runs-on: ubuntu-latest
+    env:
+      TAILWIND_VERSION: v3.4.17
+
+    strategy:
+      matrix:
+        include:
+          - goos: linux
+            goarch: amd64
+          - goos: linux
+            goarch: arm64
+          - goos: darwin
+            goarch: arm64
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+
+      - name: Install templ
+        run: go install github.com/a-h/templ/cmd/templ@v0.3.1001
+
+      - name: Install tailwindcss standalone
+        run: |
+          curl -fsSL -o /usr/local/bin/tailwindcss \
+            "https://github.com/tailwindlabs/tailwindcss/releases/download/${TAILWIND_VERSION}/tailwindcss-linux-x64"
+          chmod +x /usr/local/bin/tailwindcss
+
+      - name: Build assets
+        run: |
+          mkdir -p web/static/dist
+          templ generate ./...
+          tailwindcss -c tailwind.config.js -i web/static/src/app.css -o web/static/dist/app.css --minify
+
+      - name: Cross-compile
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+          CGO_ENABLED: "0"
+        run: |
+          mkdir -p bin
+          go build -trimpath \
+            -ldflags="-s -w -X github.com/fserg/md-to-html/internal/version.Version=$(cat VERSION)" \
+            -o "bin/md-to-html-${GOOS}-${GOARCH}" \
+            ./cmd/md-to-html
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: md-to-html-${{ matrix.goos }}-${{ matrix.goarch }}
+          path: bin/md-to-html-${{ matrix.goos }}-${{ matrix.goarch }}
+          retention-days: 7
