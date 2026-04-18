@@ -5,83 +5,55 @@
 @layer base {
   :root {
     color-scheme: light;
+    --color-background: #ffffff;
+    --color-foreground: #0a0a0a;
+    --color-muted: #f5f5f5;
+    --color-muted-foreground: #737373;
+    --color-border: #e5e5e5;
+    --color-input: #e5e5e5;
+    --color-ring: #0a0a0a;
+    --color-primary: #171717;
+    --color-primary-foreground: #fafafa;
+    --color-secondary: #f5f5f5;
+    --color-secondary-foreground: #171717;
+    --color-accent: #f5f5f5;
+    --color-accent-foreground: #171717;
+    --color-card: #ffffff;
+    --color-card-foreground: #0a0a0a;
+    --color-destructive: #dc2626;
   }
 
   html {
-    background:
-      radial-gradient(circle at top left, rgba(234, 215, 176, 0.55), transparent 34rem),
-      radial-gradient(circle at top right, rgba(184, 92, 56, 0.14), transparent 24rem),
-      linear-gradient(180deg, #fbf7ef 0%, #f3eadb 100%);
+    @apply bg-[#fafafa];
   }
 
   body {
-    @apply min-h-screen bg-transparent font-sans text-foreground antialiased;
-  }
-
-  a {
-    @apply transition-colors;
+    @apply min-h-screen bg-transparent text-foreground antialiased;
   }
 
   ::selection {
-    background: rgba(184, 92, 56, 0.18);
+    background: rgba(23, 23, 23, 0.14);
   }
 }
 
 @layer components {
-  .app-shell {
-    @apply mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8;
+  .dropzone {
+    background-image: repeating-linear-gradient(
+      45deg,
+      rgba(245, 245, 245, 0.9) 0 10px,
+      rgba(255, 255, 255, 0.9) 10px 20px
+    );
   }
 
-  .hero-panel {
-    @apply relative overflow-hidden rounded-[2rem] border border-border/70 bg-card/95 shadow-xl shadow-stone-900/5 backdrop-blur;
+  .tabs-trigger {
+    @apply inline-flex h-9 items-center justify-center gap-2 rounded-md px-3 text-xs font-medium text-muted-foreground transition;
   }
 
-  .hero-panel::before {
-    content: "";
-    @apply absolute inset-x-0 top-0 h-40 bg-gradient-to-r from-secondary/80 via-card to-transparent;
+  .tabs-trigger[data-state="active"] {
+    @apply bg-background text-foreground shadow-xs;
   }
 
-  .panel-grid {
-    @apply grid gap-6 lg:grid-cols-[minmax(0,1.1fr)_minmax(21rem,0.9fr)];
-  }
-
-  .eyebrow {
-    @apply inline-flex items-center gap-2 rounded-full border border-border/80 bg-background/90 px-3 py-1 text-xs font-semibold uppercase tracking-[0.24em] text-muted-foreground;
-  }
-
-  .section-card {
-    @apply rounded-[1.5rem] border border-border/80 bg-card/90 shadow-lg shadow-stone-900/5;
-  }
-
-  .field-label {
-    @apply text-sm font-semibold text-foreground;
-  }
-
-  .field-hint {
-    @apply text-sm text-muted-foreground;
-  }
-
-  .surface-input {
-    @apply block w-full rounded-2xl border border-border bg-background/95 px-4 py-3 text-sm text-foreground shadow-xs outline-none transition focus:border-primary focus:ring-2 focus:ring-primary/20;
-  }
-
-  .surface-textarea {
-    @apply surface-input min-h-[18rem] resize-y font-mono leading-6;
-  }
-
-  .source-tab {
-    @apply inline-flex flex-1 cursor-pointer items-center justify-center rounded-2xl px-4 py-3 text-sm font-semibold text-muted-foreground transition;
-  }
-
-  .source-tab-active {
-    @apply bg-primary text-primary-foreground shadow-sm;
-  }
-
-  .source-panel {
-    @apply rounded-[1.5rem] border border-dashed border-border/80 bg-background/70 p-4;
-  }
-
-  .result-frame {
-    @apply mt-3 h-[36rem] w-full rounded-[1.25rem] border border-border bg-white shadow-inner;
+  .focus-ring {
+    @apply outline-none focus-visible:ring-2 focus-visible:ring-foreground focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 }

@@ -1,16 +1,18 @@
 # md-to-html
 
-Сервис конвертации Markdown в самодостаточный HTML. Полностью офлайн, без обращений к внешним API.
+Сервис конвертации Markdown в самодостаточный HTML. Конвертация выполняется локально, без внешних API.
 
-Текущая версия: `0.2.1` (Go + goldmark + templUI)
+![Превью интерфейса](screen.png)
+
+Текущая версия: `0.2.2` (Go + goldmark + templUI)
 
 ## Возможности
 
 - GFM + footnote + emoji + подсветка кода через chroma.
-- Якоря в заголовках с ASCII-транслитом: `## Установка` → `#ustanovka`.
+- Web UI на `http://localhost:8080/` с загрузкой файла или вставкой текста, HTMX-обновлением результата и одноразовыми ссылками на preview/download.
 - CLI: `md-to-html cli file.md`.
-- HTTP API: `POST /convert` совместим с `v0.1.x`.
-- Web UI на `http://localhost:8080/` с inline-preview в sandbox iframe и одноразовыми ссылками на preview/download.
+- HTTP API: `POST /convert`, совместим с `v0.1.x`.
+- Якоря в заголовках с ASCII-транслитом: `## Установка` → `#ustanovka`.
 
 ## Запуск через Docker
 
@@ -18,12 +20,22 @@
 docker run --rm -p 8080:8080 ghcr.io/fserg/md-to-html:latest
 ```
 
-## Локальная разработка
-
-Требования: Go 1.23+, `templ` CLI, Node.js для dev-режима Tailwind или standalone `tailwindcss`.
+## Быстрый старт
 
 ```bash
 go install github.com/a-h/templ/cmd/templ@v0.3.1001
+npm install
+make build
+./bin/md-to-html serve
+```
+
+## Локальная разработка
+
+Требования: Go 1.24+, Node.js, `templ` CLI.
+
+```bash
+go install github.com/a-h/templ/cmd/templ@v0.3.1001
+npm install
 make tailwind
 make build
 ./bin/md-to-html serve
@@ -33,6 +45,33 @@ make build
 
 ```bash
 make dev
+```
+
+## Релизная сборка
+
+Локальный release-билд для текущей платформы:
+
+```bash
+make release
+```
+
+Скрипт:
+- генерирует `templ`-код
+- собирает Tailwind bundle
+- прогоняет `go test ./...`
+- собирает release-бинарь с версией из `VERSION`
+- кладёт артефакты в `dist/`
+
+Проверка готового release-билда:
+
+```bash
+./dist/md-to-html-$(go env GOOS)-$(go env GOARCH) serve
+```
+
+Сборка всех release-таргетов как в CI:
+
+```bash
+make release-all
 ```
 
 ## CLI

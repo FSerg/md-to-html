@@ -1,28 +1,23 @@
 package ui
 
-import "github.com/fserg/md-to-html/internal/version"
-
 templ Layout(title string) {
 	<!DOCTYPE html>
 	<html lang="ru">
 		<head>
-			<meta charset="UTF-8"/>
-			<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-			<title>{ title }</title>
+			<meta charset="utf-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<title>{ title } · md-to-html</title>
 			<link rel="stylesheet" href="/static/dist/app.css"/>
-			<script src="/static/htmx.min.js"></script>
+			<link rel="preconnect" href="https://fonts.googleapis.com"/>
+			<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+			<link
+				href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap"
+				rel="stylesheet"
+			/>
+			<script src="https://unpkg.com/htmx.org@2.0.3"></script>
 		</head>
-		<body>
-			<div class="app-shell">
-				<div class="hero-panel">
-					<div class="relative px-5 py-6 sm:px-8 sm:py-8 lg:px-10 lg:py-10">
-						{ children... }
-					</div>
-				</div>
-				<footer class="mt-6 text-center text-sm text-muted-foreground">
-					Markdown → HTML · v{ version.Version }
-				</footer>
-			</div>
+		<body class="min-h-screen bg-[#fafafa] font-sans text-foreground antialiased">
+			{ children... }
 		</body>
 	</html>
 }

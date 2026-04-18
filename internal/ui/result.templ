@@ -1,56 +1,71 @@
 package ui
 
-import (
-	"github.com/fserg/md-to-html/internal/ui/components/button"
-	"github.com/fserg/md-to-html/internal/ui/components/card"
-)
+import "fmt"
 
-templ Result(previewID, downloadID string, fullHTML string, filename string) {
-	@card.Card(card.Props{Class: "section-card border-primary/20 bg-background/90"}) {
-		@card.Content(card.ContentProps{Class: "space-y-4"}) {
-			<div class="flex flex-wrap items-center gap-3">
-				@button.Button(button.Props{
-					Href:    "/preview/" + previewID,
-					Target:  "_blank",
-					Class:   "rounded-2xl bg-primary px-4 py-2.5 text-sm font-semibold text-primary-foreground hover:bg-primary/90",
-					Variant: button.VariantDefault,
-				}) {
-					Открыть превью
-				}
-				@button.Button(button.Props{
-					Href:    "/download/" + downloadID,
-					Class:   "rounded-2xl border border-border bg-card px-4 py-2.5 text-sm font-semibold text-foreground hover:bg-muted/60",
-					Variant: button.VariantOutline,
-				}) {
-					Скачать HTML
-				}
-				<span class="text-sm text-muted-foreground">Файл: <span class="font-medium text-foreground">{ filename }</span></span>
-			</div>
-			<p class="text-sm leading-6 text-muted-foreground">
-				Ссылки одноразовые: после первого успешного открытия соответствующий UUID удаляется из preview-store.
-			</p>
-			<details class="group overflow-hidden rounded-[1.25rem] border border-border bg-card/80">
-				<summary class="cursor-pointer list-none px-4 py-3 text-sm font-semibold text-foreground">
-					<span class="inline-flex items-center gap-2">
-						<span class="inline-flex size-6 items-center justify-center rounded-full bg-muted text-xs text-muted-foreground">i</span>
-						Inline-превью в изолированном iframe
-					</span>
-				</summary>
-				<div class="border-t border-border/70 px-4 pb-4 pt-3">
-					<iframe
-						class="result-frame"
-						sandbox=""
-						referrerpolicy="no-referrer"
-						srcdoc={ fullHTML }
-					></iframe>
+templ Result(previewID, downloadID, fullHTML, filename string, sizeBytes int, lineCount int, elapsedMs int) {
+	<div id="result" class="mt-6">
+		<section class="overflow-hidden rounded-xl border border-border bg-background shadow-xs">
+			<div class="flex items-center gap-3 border-b border-border px-5 py-4">
+				<div class="grid size-8 shrink-0 place-items-center rounded-md bg-emerald-50 text-emerald-600">
+					@CheckIcon("size-4")
 				</div>
-			</details>
-		}
-	}
+				<div class="min-w-0 flex-1">
+					<div class="truncate text-sm font-medium text-foreground">Готово — { filename }</div>
+					<div class="text-xs text-muted-foreground font-mono">
+						{ formatResultMeta(sizeBytes, lineCount, elapsedMs) }
+					</div>
+				</div>
+				<span class="inline-flex items-center rounded-md border border-border bg-muted px-2 py-0.5 text-[11px] font-medium text-foreground font-mono">
+					standalone
+				</span>
+			</div>
+			<textarea id={ "result-html-" + previewID } class="sr-only" readonly>{ fullHTML }</textarea>
+			<a href={ "/preview/" + previewID } target="_blank" rel="noreferrer" class="sr-only">Открыть превью</a>
+			<iframe class="hidden" sandbox="" referrerpolicy="no-referrer" srcdoc={ fullHTML }></iframe>
+			<div class="flex flex-wrap items-center gap-2 px-5 py-5">
+				<a
+					href={ "/download/" + downloadID }
+					class="focus-ring inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-3.5 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+				>
+					@DownloadIcon("size-4")
+					<span>Скачать HTML</span>
+				</a>
+				<button
+					type="button"
+					class="focus-ring inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-background px-3.5 text-sm font-medium text-foreground transition hover:bg-muted"
+					data-copy-target={ "result-html-" + previewID }
+					onclick="window.mdToHTMLCopyButton(this)"
+				>
+					@CopyIcon("size-4")
+					<span>Скопировать</span>
+				</button>
+				<a
+					href={ "/preview/" + previewID }
+					target="_blank"
+					rel="noreferrer"
+					class="focus-ring inline-flex h-9 items-center justify-center gap-2 rounded-md border border-border bg-background px-3.5 text-sm font-medium text-foreground transition hover:bg-muted"
+				>
+					@ExternalLinkIcon("size-4")
+					<span>Открыть в новой вкладке</span>
+				</a>
+			</div>
+		</section>
+	</div>
 }
 
 templ Error(msg string) {
-	<div class="rounded-[1.25rem] border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800">
-		{ msg }
+	<div id="result" class="mt-6">
+		<div class="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800 shadow-xs">
+			{ msg }
+		</div>
 	</div>
+}
+
+func formatResultMeta(sizeBytes int, lineCount int, elapsedMs int) string {
+	kilobytes := float64(sizeBytes) / 1024
+	seconds := float64(elapsedMs) / 1000
+	if seconds < 0.1 {
+		seconds = 0.1
+	}
+	return fmt.Sprintf("%.1f KB · %d строки · сгенерирован %.1f сек назад", kilobytes, lineCount, seconds)
 }

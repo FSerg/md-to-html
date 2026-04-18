@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the project uses Semantic Versioning.
 
+## [0.2.2] - 2026-04-18
+
+### Changed
+
+- Web UI redesigned into a single-column classic layout with tabbed file/text input, updated result card, and API snippet.
+- Added a local release build script and Make targets for current-platform and cross-platform release artifacts.
+- README updated with the current build, release, and run instructions.
+
 ## [0.2.1] - 2026-04-18
 
 ### Fixed

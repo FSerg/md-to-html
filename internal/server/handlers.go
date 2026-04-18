@@ -11,6 +11,7 @@ import (
 	"net/http"
 	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/fserg/md-to-html/internal/converter"
 	"github.com/fserg/md-to-html/internal/ui"
@@ -79,6 +80,7 @@ func (s *Server) handleHome(w http.ResponseWriter, r *http.Request) {
 }
 
 func (s *Server) handleUIConvert(w http.ResponseWriter, r *http.Request) {
+	startedAt := time.Now()
 	r.Body = http.MaxBytesReader(w, r.Body, s.cfg.MaxRequestBytes)
 	if err := r.ParseMultipartForm(s.cfg.MaxRequestBytes); err != nil {
 		s.renderUIError(w, r, http.StatusRequestEntityTooLarge, "Слишком большой файл или ошибка формы")
@@ -100,10 +102,15 @@ func (s *Server) handleUIConvert(w http.ResponseWriter, r *http.Request) {
 
 	previewID := s.store.Put(result.HTML, "text/html; charset=utf-8", filename)
 	downloadID := s.store.Put(result.HTML, "text/html; charset=utf-8", filename)
+	lineCount := bytes.Count(result.HTML, []byte("\n")) + 1
+	elapsedMs := int(time.Since(startedAt).Milliseconds())
+	if elapsedMs < 1 {
+		elapsedMs = 1
+	}
 
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
-	_ = ui.Result(previewID, downloadID, string(result.HTML), filename).Render(r.Context(), w)
+	_ = ui.Result(previewID, downloadID, string(result.HTML), filename, len(result.HTML), lineCount, elapsedMs).Render(r.Context(), w)
 }
 
 func (s *Server) handlePreview(w http.ResponseWriter, r *http.Request) {

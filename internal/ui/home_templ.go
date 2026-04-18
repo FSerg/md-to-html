@@ -8,11 +8,6 @@ package ui
 import "github.com/a-h/templ"
 import templruntime "github.com/a-h/templ/runtime"
 
-import (
-	"github.com/fserg/md-to-html/internal/ui/components/button"
-	"github.com/fserg/md-to-html/internal/ui/components/card"
-)
-
 func Home() templ.Component {
 	return templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
 		templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
@@ -46,162 +41,77 @@ func Home() templ.Component {
 				}()
 			}
 			ctx = templ.InitializeContext(ctx)
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"panel-grid\"><section class=\"space-y-6\"><div class=\"space-y-4\"><div class=\"eyebrow\"><span>Go migration</span> <span>goldmark + templUI</span></div><div class=\"space-y-3\"><h1 class=\"max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl\">Markdown → HTML без внешних зависимостей в результирующем документе.</h1><p class=\"max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg\">Загрузите `.md`-файл или вставьте текст вручную. Сервис отдаст автономный HTML, одноразовое превью и отдельную ссылку на скачивание.</p></div></div><div class=\"grid gap-4 sm:grid-cols-3\"><div class=\"section-card p-4\"><div class=\"text-sm font-semibold text-foreground\">Самодостаточный HTML</div><p class=\"mt-2 text-sm leading-6 text-muted-foreground\">Результат открывается локально без CDN и без сетевых вызовов.</p></div><div class=\"section-card p-4\"><div class=\"text-sm font-semibold text-foreground\">Одноразовые ссылки</div><p class=\"mt-2 text-sm leading-6 text-muted-foreground\">Preview и download живут до первого открытия или максимум один час.</p></div><div class=\"section-card p-4\"><div class=\"text-sm font-semibold text-foreground\">Русский интерфейс</div><p class=\"mt-2 text-sm leading-6 text-muted-foreground\">Форма ориентирована на быстрый ручной прогон документации и заметок.</p></div></div></section><section>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 1, "<div class=\"mx-auto max-w-3xl px-6 py-10\"><header class=\"mb-8\"><h1 class=\"text-2xl font-semibold tracking-tight text-foreground sm:text-[2rem]\">Markdown → standalone HTML</h1><p class=\"mt-1.5 max-w-prose text-sm leading-6 text-muted-foreground\">Загрузите .md файл или вставьте Markdown-текст. Результат — готовый самодостаточный HTML со встроенными стилями.</p></header><form id=\"convert-form\" class=\"space-y-6\" hx-post=\"/ui/convert\" hx-target=\"#result\" hx-swap=\"outerHTML\" hx-encoding=\"multipart/form-data\" onreset=\"window.setTimeout(window.mdToHTMLResetForm, 0)\"><input id=\"source-field\" type=\"hidden\" name=\"source\" value=\"file\"><section class=\"overflow-hidden rounded-xl border border-border bg-background shadow-xs\"><div class=\"border-b border-border px-4 py-4\"><div class=\"inline-flex items-center gap-1 rounded-lg bg-muted p-1\" role=\"tablist\" aria-label=\"Источник markdown\"><button id=\"tab-file\" type=\"button\" value=\"file\" class=\"tabs-trigger\" data-state=\"active\" onclick=\"window.mdToHTMLSetSource('file')\">")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Var3 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-				templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-				templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-				if !templ_7745c5c3_IsBuffer {
-					defer func() {
-						templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-						if templ_7745c5c3_Err == nil {
-							templ_7745c5c3_Err = templ_7745c5c3_BufErr
-						}
-					}()
-				}
-				ctx = templ.InitializeContext(ctx)
-				templ_7745c5c3_Var4 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-					if !templ_7745c5c3_IsBuffer {
-						defer func() {
-							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-							if templ_7745c5c3_Err == nil {
-								templ_7745c5c3_Err = templ_7745c5c3_BufErr
-							}
-						}()
-					}
-					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<div class=\"text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground\">Конвертация</div>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Var5 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "Выберите источник Markdown")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = card.Title(card.TitleProps{Class: "text-2xl font-semibold tracking-tight text-foreground"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var5), templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, " ")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Var6 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "Форма отправляется через HTMX на `POST /ui/convert`, а результат подменяется прямо в блоке ниже.")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = card.Description(card.DescriptionProps{Class: "max-w-xl text-sm leading-6 text-muted-foreground"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var6), templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					return nil
-				})
-				templ_7745c5c3_Err = card.Header(card.HeaderProps{Class: "space-y-2 border-b border-border/70 pb-6"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var4), templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, " ")
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				templ_7745c5c3_Var7 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-					templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-					templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-					if !templ_7745c5c3_IsBuffer {
-						defer func() {
-							templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-							if templ_7745c5c3_Err == nil {
-								templ_7745c5c3_Err = templ_7745c5c3_BufErr
-							}
-						}()
-					}
-					ctx = templ.InitializeContext(ctx)
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<form id=\"convert-form\" hx-post=\"/ui/convert\" hx-target=\"#result\" hx-swap=\"innerHTML\" hx-encoding=\"multipart/form-data\" class=\"space-y-5\"><div class=\"space-y-2\"><div class=\"field-label\">Источник</div><div class=\"grid grid-cols-2 gap-2 rounded-[1.35rem] border border-border/80 bg-muted/55 p-2\"><label class=\"source-tab source-tab-active\" data-source-tab=\"file\" data-active-classes=\"source-tab source-tab-active\" data-inactive-classes=\"source-tab\"><input type=\"radio\" name=\"source\" value=\"file\" class=\"sr-only\" checked onchange=\"window.mdToHTMLSwitchSource(this.value)\"> Файл</label> <label class=\"source-tab\" data-source-tab=\"text\" data-active-classes=\"source-tab source-tab-active\" data-inactive-classes=\"source-tab\"><input type=\"radio\" name=\"source\" value=\"text\" class=\"sr-only\" onchange=\"window.mdToHTMLSwitchSource(this.value)\"> Текст</label></div></div><div id=\"source-file\" class=\"source-panel space-y-3\"><label class=\"field-label\" for=\"markdown-file\">Markdown-файл</label> <input id=\"markdown-file\" class=\"surface-input file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90\" type=\"file\" name=\"markdown_file\" accept=\".md,.markdown,.mdown,text/markdown\"><p class=\"field-hint\">Используйте для загрузки существующего документа. Имя файла станет базой для имени HTML.</p></div><div id=\"source-text\" class=\"source-panel hidden space-y-3\"><label class=\"field-label\" for=\"markdown-text\">Markdown-текст</label> <textarea id=\"markdown-text\" class=\"surface-textarea\" name=\"markdown_text\" rows=\"14\" placeholder=\"# Привет, мир&#10;&#10;- списки&#10;- таблицы&#10;- код\"></textarea><p class=\"field-hint\">Подходит для быстрых заметок и вставок без промежуточного файла.</p></div><div class=\"flex flex-wrap items-center gap-3\">")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Var8 := templruntime.GeneratedTemplate(func(templ_7745c5c3_Input templruntime.GeneratedComponentInput) (templ_7745c5c3_Err error) {
-						templ_7745c5c3_W, ctx := templ_7745c5c3_Input.Writer, templ_7745c5c3_Input.Context
-						templ_7745c5c3_Buffer, templ_7745c5c3_IsBuffer := templruntime.GetBuffer(templ_7745c5c3_W)
-						if !templ_7745c5c3_IsBuffer {
-							defer func() {
-								templ_7745c5c3_BufErr := templruntime.ReleaseBuffer(templ_7745c5c3_Buffer)
-								if templ_7745c5c3_Err == nil {
-									templ_7745c5c3_Err = templ_7745c5c3_BufErr
-								}
-							}()
-						}
-						ctx = templ.InitializeContext(ctx)
-						templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "<span>Конвертировать</span>")
-						if templ_7745c5c3_Err != nil {
-							return templ_7745c5c3_Err
-						}
-						return nil
-					})
-					templ_7745c5c3_Err = button.Button(button.Props{
-						Type:    button.TypeSubmit,
-						Class:   "rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90",
-						Variant: button.VariantDefault,
-						Size:    button.SizeDefault,
-					}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var8), templ_7745c5c3_Buffer)
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "<span class=\"field-hint\">Лимиты тела запроса и markdown берутся из server config.</span></div></form><div id=\"result\" class=\"min-h-[4rem]\"></div>")
-					if templ_7745c5c3_Err != nil {
-						return templ_7745c5c3_Err
-					}
-					return nil
-				})
-				templ_7745c5c3_Err = card.Content(card.ContentProps{Class: "space-y-5"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var7), templ_7745c5c3_Buffer)
-				if templ_7745c5c3_Err != nil {
-					return templ_7745c5c3_Err
-				}
-				return nil
-			})
-			templ_7745c5c3_Err = card.Card(card.Props{Class: "section-card overflow-hidden"}).Render(templ.WithChildren(ctx, templ_7745c5c3_Var3), templ_7745c5c3_Buffer)
+			templ_7745c5c3_Err = FileIcon("size-3.5").Render(ctx, templ_7745c5c3_Buffer)
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
-			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 10, "</section></div><script>\n\t\t\twindow.mdToHTMLSwitchSource = function(value) {\n\t\t\t\tconst filePanel = document.getElementById(\"source-file\");\n\t\t\t\tconst textPanel = document.getElementById(\"source-text\");\n\t\t\t\tif (!filePanel || !textPanel) {\n\t\t\t\t\treturn;\n\t\t\t\t}\n\n\t\t\t\tconst showFile = value === \"file\";\n\t\t\t\tfilePanel.classList.toggle(\"hidden\", !showFile);\n\t\t\t\ttextPanel.classList.toggle(\"hidden\", showFile);\n\n\t\t\t\tdocument.querySelectorAll(\"[data-source-tab]\").forEach((tab) => {\n\t\t\t\t\tconst tabValue = tab.getAttribute(\"data-source-tab\");\n\t\t\t\t\tconst active = tabValue === value;\n\t\t\t\t\ttab.className = active\n\t\t\t\t\t\t? tab.getAttribute(\"data-active-classes\")\n\t\t\t\t\t\t: tab.getAttribute(\"data-inactive-classes\");\n\t\t\t\t});\n\t\t\t};\n\t\t</script>")
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 2, "<span>Загрузить файл</span></button> <button id=\"tab-text\" type=\"button\" value=\"text\" class=\"tabs-trigger\" onclick=\"window.mdToHTMLSetSource('text')\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = AlignLeftIcon("size-3.5").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 3, "<span>Вставить текст</span></button></div></div><div class=\"p-6\"><div id=\"panel-file\" class=\"flex flex-col gap-4\"><label id=\"markdown-dropzone\" for=\"markdown-file\" class=\"dropzone group block cursor-pointer rounded-lg border-2 border-dashed border-border p-10 text-center transition hover:border-foreground/25\"><input id=\"markdown-file\" type=\"file\" name=\"markdown_file\" accept=\".md,.markdown,.mdown,text/markdown\" class=\"sr-only\" onchange=\"window.mdToHTMLHandleFileChange(this)\"><div class=\"mx-auto mb-3 grid size-10 place-items-center rounded-full bg-muted text-muted-foreground transition group-hover:bg-primary/5 group-hover:text-foreground\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = UploadIcon("size-5").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 4, "</div><div class=\"text-sm font-medium text-foreground\">Перетащите .md файл сюда</div><div class=\"mt-1 text-xs text-muted-foreground\">или <span class=\"text-foreground underline underline-offset-2\">выберите на диске</span></div><div class=\"mt-3 text-[11px] text-muted-foreground\">Лимит: 200 MB · Тип: text/markdown</div></label><div id=\"selected-file\" class=\"hidden items-center gap-3 rounded-lg border border-border bg-muted/40 p-3\"><div class=\"grid size-9 shrink-0 place-items-center rounded-md border border-border bg-background text-muted-foreground\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = FileIcon("size-4").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 5, "</div><div class=\"min-w-0 flex-1\"><div id=\"selected-file-name\" class=\"truncate text-sm font-medium text-foreground\">README.md</div><div id=\"selected-file-meta\" class=\"text-xs text-muted-foreground font-mono\">3.4 KB · изменён только что</div></div><button type=\"button\" class=\"inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground\" aria-label=\"Удалить файл\" onclick=\"window.mdToHTMLClearFile()\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = CloseIcon("size-4").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 6, "</button></div></div><div id=\"panel-text\" class=\"hidden flex-col gap-3\"><label for=\"markdown-text\" class=\"text-[13px] font-medium text-foreground\">Markdown-текст</label><div class=\"relative\"><textarea id=\"markdown-text\" name=\"markdown_text\" rows=\"10\" class=\"focus-ring min-h-[16rem] w-full resize-y rounded-md border border-border bg-background px-3 py-2.5 font-mono text-sm leading-6 text-foreground placeholder:text-muted-foreground\" placeholder=\"# Мой заголовок&#10;&#10;Здесь будет текст...\" oninput=\"window.mdToHTMLUpdateCharCount(this)\"></textarea> <span id=\"markdown-char-count\" class=\"pointer-events-none absolute bottom-2.5 right-3 text-[10px] text-muted-foreground font-mono\">0 символов</span></div><p class=\"flex items-center gap-2 text-[11px] text-muted-foreground\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = InfoIcon("size-3.5").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 7, "<span>Поддерживается CommonMark + GFM</span></p></div></div><div class=\"flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4\"><p class=\"text-xs text-muted-foreground\">Конвертация использует публичный <code class=\"font-mono text-foreground\">GitHub API</code></p><div class=\"flex items-center gap-2\"><button type=\"reset\" class=\"focus-ring inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-3.5 text-sm font-medium text-foreground transition hover:bg-muted\">Сбросить</button> <button type=\"submit\" class=\"focus-ring inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90\"><span>Конвертировать</span>")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = ArrowRightIcon("size-4").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 8, "</button></div></div></section></form><div id=\"result\" class=\"mt-6\"></div><section class=\"mt-6 overflow-hidden rounded-xl border border-border bg-background shadow-xs\"><div class=\"flex items-center justify-between border-b border-border px-5 py-3.5\"><div class=\"flex items-center gap-2\"><span class=\"text-sm font-medium text-foreground\">API</span> <span class=\"inline-flex items-center rounded-md border border-border bg-muted px-1.5 py-px text-[10px] font-medium text-foreground font-mono\">POST /convert</span></div><button type=\"button\" class=\"focus-ring inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground\" aria-label=\"Скопировать curl\" data-copy-target=\"api-curl\" data-copy-label=\"curl\" onclick=\"window.mdToHTMLCopyButton(this)\">")
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = CopyIcon("size-3.5").Render(ctx, templ_7745c5c3_Buffer)
+			if templ_7745c5c3_Err != nil {
+				return templ_7745c5c3_Err
+			}
+			templ_7745c5c3_Err = templruntime.WriteString(templ_7745c5c3_Buffer, 9, "</button></div><textarea id=\"api-curl\" class=\"sr-only\" readonly>curl -X POST http://localhost:8000/convert \\ -H 'Content-Type: application/json' \\ -d '&#123;\"markdown\":\"# Hello\"&#125;'</textarea><pre class=\"overflow-x-auto px-5 py-4 font-mono text-[12px] leading-relaxed text-foreground\"><span class=\"text-muted-foreground\">$</span> curl -X POST http://localhost:8000/convert \\ -H 'Content-Type: application/json' \\ -d '&#123;\"markdown\":\"# Hello\"&#125;'</pre></section></div><script>\n\t\t\t(() => {\n\t\t\t\tfunction byId(id) {\n\t\t\t\t\treturn document.getElementById(id);\n\t\t\t\t}\n\n\t\t\t\tfunction formatBytes(bytes) {\n\t\t\t\t\tif (bytes < 1024) {\n\t\t\t\t\t\treturn bytes + \" B\";\n\t\t\t\t\t}\n\t\t\t\t\treturn (bytes / 1024).toFixed(1) + \" KB\";\n\t\t\t\t}\n\n\t\t\t\tfunction formatRelativeTime(lastModified) {\n\t\t\t\t\tconst delta = Date.now() - lastModified;\n\t\t\t\t\tconst minute = 60 * 1000;\n\t\t\t\t\tconst hour = 60 * minute;\n\t\t\t\t\tconst day = 24 * hour;\n\n\t\t\t\t\tif (delta < minute) {\n\t\t\t\t\t\treturn \"изменён только что\";\n\t\t\t\t\t}\n\t\t\t\t\tif (delta < hour) {\n\t\t\t\t\t\tconst value = Math.max(1, Math.round(delta / minute));\n\t\t\t\t\t\treturn \"изменён \" + value + \" мин назад\";\n\t\t\t\t\t}\n\t\t\t\t\tif (delta < day) {\n\t\t\t\t\t\tconst value = Math.max(1, Math.round(delta / hour));\n\t\t\t\t\t\treturn \"изменён \" + value + \" ч назад\";\n\t\t\t\t\t}\n\t\t\t\t\tconst value = Math.max(1, Math.round(delta / day));\n\t\t\t\t\treturn \"изменён \" + value + \" дн назад\";\n\t\t\t\t}\n\n\t\t\t\tfunction flashCopyState(button) {\n\t\t\t\t\tif (!button) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\tconst original = button.dataset.copyFlashOriginal || button.innerHTML;\n\t\t\t\t\tbutton.dataset.copyFlashOriginal = original;\n\t\t\t\t\tbutton.innerHTML = \"Скопировано\";\n\t\t\t\t\twindow.setTimeout(() => {\n\t\t\t\t\t\tbutton.innerHTML = original;\n\t\t\t\t\t}, 1400);\n\t\t\t\t}\n\n\t\t\t\tasync function copyText(value) {\n\t\t\t\t\tif (navigator.clipboard && window.isSecureContext) {\n\t\t\t\t\t\tawait navigator.clipboard.writeText(value);\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tconst helper = document.createElement(\"textarea\");\n\t\t\t\t\thelper.value = value;\n\t\t\t\t\thelper.setAttribute(\"readonly\", \"readonly\");\n\t\t\t\t\thelper.style.position = \"absolute\";\n\t\t\t\t\thelper.style.left = \"-9999px\";\n\t\t\t\t\tdocument.body.appendChild(helper);\n\t\t\t\t\thelper.select();\n\t\t\t\t\tdocument.execCommand(\"copy\");\n\t\t\t\t\tdocument.body.removeChild(helper);\n\t\t\t\t}\n\n\t\t\t\tfunction bindDropzone() {\n\t\t\t\t\tconst dropzone = byId(\"markdown-dropzone\");\n\t\t\t\t\tconst input = byId(\"markdown-file\");\n\t\t\t\t\tif (!dropzone || !input || dropzone.dataset.bound === \"true\") {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tconst activeClasses = [\"border-foreground/35\", \"bg-muted/60\"];\n\t\t\t\t\tdropzone.dataset.bound = \"true\";\n\n\t\t\t\t\tdropzone.addEventListener(\"dragover\", (event) => {\n\t\t\t\t\t\tevent.preventDefault();\n\t\t\t\t\t\tactiveClasses.forEach((className) => dropzone.classList.add(className));\n\t\t\t\t\t});\n\t\t\t\t\tdropzone.addEventListener(\"dragleave\", () => {\n\t\t\t\t\t\tactiveClasses.forEach((className) => dropzone.classList.remove(className));\n\t\t\t\t\t});\n\t\t\t\t\tdropzone.addEventListener(\"drop\", (event) => {\n\t\t\t\t\t\tevent.preventDefault();\n\t\t\t\t\t\tactiveClasses.forEach((className) => dropzone.classList.remove(className));\n\t\t\t\t\t\tif (!event.dataTransfer || !event.dataTransfer.files.length) {\n\t\t\t\t\t\t\treturn;\n\t\t\t\t\t\t}\n\t\t\t\t\t\tinput.files = event.dataTransfer.files;\n\t\t\t\t\t\twindow.mdToHTMLHandleFileChange(input);\n\t\t\t\t\t});\n\t\t\t\t}\n\n\t\t\t\twindow.mdToHTMLSetSource = function(source) {\n\t\t\t\t\tconst sourceField = byId(\"source-field\");\n\t\t\t\t\tconst filePanel = byId(\"panel-file\");\n\t\t\t\t\tconst textPanel = byId(\"panel-text\");\n\t\t\t\t\tconst fileTab = byId(\"tab-file\");\n\t\t\t\t\tconst textTab = byId(\"tab-text\");\n\t\t\t\t\tif (!sourceField || !filePanel || !textPanel || !fileTab || !textTab) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tconst showFile = source === \"file\";\n\t\t\t\t\tsourceField.value = source;\n\t\t\t\t\tfilePanel.classList.toggle(\"hidden\", !showFile);\n\t\t\t\t\tfilePanel.classList.toggle(\"flex\", showFile);\n\t\t\t\t\ttextPanel.classList.toggle(\"hidden\", showFile);\n\t\t\t\t\ttextPanel.classList.toggle(\"flex\", !showFile);\n\t\t\t\t\tfileTab.setAttribute(\"data-state\", showFile ? \"active\" : \"inactive\");\n\t\t\t\t\ttextTab.setAttribute(\"data-state\", showFile ? \"inactive\" : \"active\");\n\t\t\t\t};\n\n\t\t\t\twindow.mdToHTMLHandleFileChange = function(input) {\n\t\t\t\t\tconst file = input && input.files && input.files[0];\n\t\t\t\t\tconst summary = byId(\"selected-file\");\n\t\t\t\t\tconst fileName = byId(\"selected-file-name\");\n\t\t\t\t\tconst fileMeta = byId(\"selected-file-meta\");\n\t\t\t\t\tif (!summary || !fileName || !fileMeta) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tif (!file) {\n\t\t\t\t\t\tsummary.classList.add(\"hidden\");\n\t\t\t\t\t\tsummary.classList.remove(\"flex\");\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\n\t\t\t\t\tfileName.textContent = file.name;\n\t\t\t\t\tfileMeta.textContent = formatBytes(file.size) + \" · \" + formatRelativeTime(file.lastModified);\n\t\t\t\t\tsummary.classList.remove(\"hidden\");\n\t\t\t\t\tsummary.classList.add(\"flex\");\n\t\t\t\t};\n\n\t\t\t\twindow.mdToHTMLClearFile = function() {\n\t\t\t\t\tconst input = byId(\"markdown-file\");\n\t\t\t\t\tconst summary = byId(\"selected-file\");\n\t\t\t\t\tif (input) {\n\t\t\t\t\t\tinput.value = \"\";\n\t\t\t\t\t}\n\t\t\t\t\tif (summary) {\n\t\t\t\t\t\tsummary.classList.add(\"hidden\");\n\t\t\t\t\t\tsummary.classList.remove(\"flex\");\n\t\t\t\t\t}\n\t\t\t\t};\n\n\t\t\t\twindow.mdToHTMLUpdateCharCount = function(textarea) {\n\t\t\t\t\tconst counter = byId(\"markdown-char-count\");\n\t\t\t\t\tif (!counter || !textarea) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\tconst count = textarea.value.length;\n\t\t\t\t\tcounter.textContent = count + \" символов\";\n\t\t\t\t};\n\n\t\t\t\twindow.mdToHTMLResetForm = function() {\n\t\t\t\t\twindow.mdToHTMLSetSource(\"file\");\n\t\t\t\t\twindow.mdToHTMLClearFile();\n\t\t\t\t\tconst textarea = byId(\"markdown-text\");\n\t\t\t\t\tif (textarea) {\n\t\t\t\t\t\twindow.mdToHTMLUpdateCharCount(textarea);\n\t\t\t\t\t}\n\t\t\t\t\tconst result = byId(\"result\");\n\t\t\t\t\tif (result) {\n\t\t\t\t\t\tresult.innerHTML = \"\";\n\t\t\t\t\t}\n\t\t\t\t};\n\n\t\t\t\twindow.mdToHTMLCopyButton = async function(button) {\n\t\t\t\t\tif (!button) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\tconst targetID = button.dataset.copyTarget;\n\t\t\t\t\tconst target = targetID ? byId(targetID) : null;\n\t\t\t\t\tconst value = target ? target.value || target.textContent || \"\" : \"\";\n\t\t\t\t\tif (!value) {\n\t\t\t\t\t\treturn;\n\t\t\t\t\t}\n\t\t\t\t\ttry {\n\t\t\t\t\t\tawait copyText(value);\n\t\t\t\t\t\tflashCopyState(button);\n\t\t\t\t\t} catch (_) {\n\t\t\t\t\t\t// noop\n\t\t\t\t\t}\n\t\t\t\t};\n\n\t\t\t\tfunction init() {\n\t\t\t\t\tbindDropzone();\n\t\t\t\t\twindow.mdToHTMLSetSource(\"file\");\n\t\t\t\t\tconst textarea = byId(\"markdown-text\");\n\t\t\t\t\tif (textarea) {\n\t\t\t\t\t\twindow.mdToHTMLUpdateCharCount(textarea);\n\t\t\t\t\t}\n\t\t\t\t}\n\n\t\t\t\tif (document.readyState === \"loading\") {\n\t\t\t\t\tdocument.addEventListener(\"DOMContentLoaded\", init, { once: true });\n\t\t\t\t} else {\n\t\t\t\t\tinit();\n\t\t\t\t}\n\t\t\t})();\n\t\t</script>")
 			if templ_7745c5c3_Err != nil {
 				return templ_7745c5c3_Err
 			}
 			return nil
 		})
-		templ_7745c5c3_Err = Layout("Markdown → HTML").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
+		templ_7745c5c3_Err = Layout("Markdown → standalone HTML").Render(templ.WithChildren(ctx, templ_7745c5c3_Var2), templ_7745c5c3_Buffer)
 		if templ_7745c5c3_Err != nil {
 			return templ_7745c5c3_Err
 		}

@@ -3,7 +3,7 @@ LDFLAGS := -X github.com/fserg/md-to-html/internal/version.Version=$(VERSION)
 GOBIN := $(shell go env GOPATH)/bin
 TEMPL := $(GOBIN)/templ
 
-.PHONY: build run test templ tailwind dev docker clean tools
+.PHONY: build run test templ tailwind dev docker clean tools release release-all
 
 build:
 	go build -ldflags "$(LDFLAGS)" -o bin/md-to-html ./cmd/md-to-html
@@ -30,6 +30,12 @@ dev:
 
 docker:
 	@echo "docker target will be implemented in phase 6"
+
+release:
+	./scripts/release-build.sh
+
+release-all:
+	./scripts/release-build.sh --all
 
 clean:
 	rm -rf bin/ tmp/ web/static/dist/

@@ -1,158 +1,371 @@
 package ui
 
-import (
-	"github.com/fserg/md-to-html/internal/ui/components/button"
-	"github.com/fserg/md-to-html/internal/ui/components/card"
-)
-
 templ Home() {
-	@Layout("Markdown → HTML") {
-		<div class="panel-grid">
-			<section class="space-y-6">
-				<div class="space-y-4">
-					<div class="eyebrow">
-						<span>Go migration</span>
-						<span>goldmark + templUI</span>
+	@Layout("Markdown → standalone HTML") {
+		<div class="mx-auto max-w-3xl px-6 py-10">
+			<header class="mb-8">
+				<h1 class="text-2xl font-semibold tracking-tight text-foreground sm:text-[2rem]">Markdown → standalone HTML</h1>
+				<p class="mt-1.5 max-w-prose text-sm leading-6 text-muted-foreground">
+					Загрузите .md файл или вставьте Markdown-текст. Результат — готовый самодостаточный HTML со встроенными стилями.
+				</p>
+			</header>
+
+			<form
+				id="convert-form"
+				class="space-y-6"
+				hx-post="/ui/convert"
+				hx-target="#result"
+				hx-swap="outerHTML"
+				hx-encoding="multipart/form-data"
+				onreset="window.setTimeout(window.mdToHTMLResetForm, 0)"
+			>
+				<input id="source-field" type="hidden" name="source" value="file"/>
+
+				<section class="overflow-hidden rounded-xl border border-border bg-background shadow-xs">
+					<div class="border-b border-border px-4 py-4">
+						<div class="inline-flex items-center gap-1 rounded-lg bg-muted p-1" role="tablist" aria-label="Источник markdown">
+							<button
+								id="tab-file"
+								type="button"
+								value="file"
+								class="tabs-trigger"
+								data-state="active"
+								onclick="window.mdToHTMLSetSource('file')"
+							>
+								@FileIcon("size-3.5")
+								<span>Загрузить файл</span>
+							</button>
+							<button
+								id="tab-text"
+								type="button"
+								value="text"
+								class="tabs-trigger"
+								onclick="window.mdToHTMLSetSource('text')"
+							>
+								@AlignLeftIcon("size-3.5")
+								<span>Вставить текст</span>
+							</button>
+						</div>
 					</div>
-					<div class="space-y-3">
-						<h1 class="max-w-3xl text-4xl font-semibold leading-tight tracking-tight text-foreground sm:text-5xl">
-							Markdown → HTML без внешних зависимостей в результирующем документе.
-						</h1>
-						<p class="max-w-2xl text-base leading-7 text-muted-foreground sm:text-lg">
-							Загрузите `.md`-файл или вставьте текст вручную. Сервис отдаст автономный HTML, одноразовое превью и отдельную ссылку на скачивание.
-						</p>
-					</div>
-				</div>
-				<div class="grid gap-4 sm:grid-cols-3">
-					<div class="section-card p-4">
-						<div class="text-sm font-semibold text-foreground">Самодостаточный HTML</div>
-						<p class="mt-2 text-sm leading-6 text-muted-foreground">Результат открывается локально без CDN и без сетевых вызовов.</p>
-					</div>
-					<div class="section-card p-4">
-						<div class="text-sm font-semibold text-foreground">Одноразовые ссылки</div>
-						<p class="mt-2 text-sm leading-6 text-muted-foreground">Preview и download живут до первого открытия или максимум один час.</p>
-					</div>
-					<div class="section-card p-4">
-						<div class="text-sm font-semibold text-foreground">Русский интерфейс</div>
-						<p class="mt-2 text-sm leading-6 text-muted-foreground">Форма ориентирована на быстрый ручной прогон документации и заметок.</p>
-					</div>
-				</div>
-			</section>
-			<section>
-				@card.Card(card.Props{Class: "section-card overflow-hidden"}) {
-					@card.Header(card.HeaderProps{Class: "space-y-2 border-b border-border/70 pb-6"}) {
-						<div class="text-sm font-semibold uppercase tracking-[0.18em] text-muted-foreground">Конвертация</div>
-						@card.Title(card.TitleProps{Class: "text-2xl font-semibold tracking-tight text-foreground"}) {
-							Выберите источник Markdown
-						}
-						@card.Description(card.DescriptionProps{Class: "max-w-xl text-sm leading-6 text-muted-foreground"}) {
-							Форма отправляется через HTMX на `POST /ui/convert`, а результат подменяется прямо в блоке ниже.
-						}
-					}
-					@card.Content(card.ContentProps{Class: "space-y-5"}) {
-						<form
-							id="convert-form"
-							hx-post="/ui/convert"
-							hx-target="#result"
-							hx-swap="innerHTML"
-							hx-encoding="multipart/form-data"
-							class="space-y-5"
-						>
-							<div class="space-y-2">
-								<div class="field-label">Источник</div>
-								<div class="grid grid-cols-2 gap-2 rounded-[1.35rem] border border-border/80 bg-muted/55 p-2">
-									<label
-										class="source-tab source-tab-active"
-										data-source-tab="file"
-										data-active-classes="source-tab source-tab-active"
-										data-inactive-classes="source-tab"
-									>
-										<input
-											type="radio"
-											name="source"
-											value="file"
-											class="sr-only"
-											checked
-											onchange="window.mdToHTMLSwitchSource(this.value)"
-										/>
-										Файл
-									</label>
-									<label
-										class="source-tab"
-										data-source-tab="text"
-										data-active-classes="source-tab source-tab-active"
-										data-inactive-classes="source-tab"
-									>
-										<input
-											type="radio"
-											name="source"
-											value="text"
-											class="sr-only"
-											onchange="window.mdToHTMLSwitchSource(this.value)"
-										/>
-										Текст
-									</label>
-								</div>
-							</div>
-							<div id="source-file" class="source-panel space-y-3">
-								<label class="field-label" for="markdown-file">Markdown-файл</label>
+
+					<div class="p-6">
+						<div id="panel-file" class="flex flex-col gap-4">
+							<label
+								id="markdown-dropzone"
+								for="markdown-file"
+								class="dropzone group block cursor-pointer rounded-lg border-2 border-dashed border-border p-10 text-center transition hover:border-foreground/25"
+							>
 								<input
 									id="markdown-file"
-									class="surface-input file:mr-4 file:rounded-xl file:border-0 file:bg-primary file:px-4 file:py-2 file:text-sm file:font-semibold file:text-primary-foreground hover:file:bg-primary/90"
 									type="file"
 									name="markdown_file"
 									accept=".md,.markdown,.mdown,text/markdown"
+									class="sr-only"
+									onchange="window.mdToHTMLHandleFileChange(this)"
 								/>
-								<p class="field-hint">Используйте для загрузки существующего документа. Имя файла станет базой для имени HTML.</p>
+								<div class="mx-auto mb-3 grid size-10 place-items-center rounded-full bg-muted text-muted-foreground transition group-hover:bg-primary/5 group-hover:text-foreground">
+									@UploadIcon("size-5")
+								</div>
+								<div class="text-sm font-medium text-foreground">Перетащите .md файл сюда</div>
+								<div class="mt-1 text-xs text-muted-foreground">
+									или <span class="text-foreground underline underline-offset-2">выберите на диске</span>
+								</div>
+								<div class="mt-3 text-[11px] text-muted-foreground">Лимит: 200 MB · Тип: text/markdown</div>
+							</label>
+
+							<div id="selected-file" class="hidden items-center gap-3 rounded-lg border border-border bg-muted/40 p-3">
+								<div class="grid size-9 shrink-0 place-items-center rounded-md border border-border bg-background text-muted-foreground">
+									@FileIcon("size-4")
+								</div>
+								<div class="min-w-0 flex-1">
+									<div id="selected-file-name" class="truncate text-sm font-medium text-foreground">README.md</div>
+									<div id="selected-file-meta" class="text-xs text-muted-foreground font-mono">3.4 KB · изменён только что</div>
+								</div>
+								<button
+									type="button"
+									class="inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
+									aria-label="Удалить файл"
+									onclick="window.mdToHTMLClearFile()"
+								>
+									@CloseIcon("size-4")
+								</button>
 							</div>
-							<div id="source-text" class="source-panel hidden space-y-3">
-								<label class="field-label" for="markdown-text">Markdown-текст</label>
+						</div>
+
+						<div id="panel-text" class="hidden flex-col gap-3">
+							<label for="markdown-text" class="text-[13px] font-medium text-foreground">Markdown-текст</label>
+							<div class="relative">
 								<textarea
 									id="markdown-text"
-									class="surface-textarea"
 									name="markdown_text"
-									rows="14"
-									placeholder="# Привет, мир&#10;&#10;- списки&#10;- таблицы&#10;- код"
+									rows="10"
+									class="focus-ring min-h-[16rem] w-full resize-y rounded-md border border-border bg-background px-3 py-2.5 font-mono text-sm leading-6 text-foreground placeholder:text-muted-foreground"
+									placeholder="# Мой заголовок&#10;&#10;Здесь будет текст..."
+									oninput="window.mdToHTMLUpdateCharCount(this)"
 								></textarea>
-								<p class="field-hint">Подходит для быстрых заметок и вставок без промежуточного файла.</p>
+								<span id="markdown-char-count" class="pointer-events-none absolute bottom-2.5 right-3 text-[10px] text-muted-foreground font-mono">
+									0 символов
+								</span>
 							</div>
-							<div class="flex flex-wrap items-center gap-3">
-								@button.Button(button.Props{
-									Type:    button.TypeSubmit,
-									Class:   "rounded-2xl bg-primary px-5 py-3 text-sm font-semibold text-primary-foreground hover:bg-primary/90",
-									Variant: button.VariantDefault,
-									Size:    button.SizeDefault,
-								}) {
-									<span>Конвертировать</span>
-								}
-								<span class="field-hint">Лимиты тела запроса и markdown берутся из server config.</span>
-							</div>
-						</form>
-						<div id="result" class="min-h-[4rem]"></div>
-					}
-				}
+							<p class="flex items-center gap-2 text-[11px] text-muted-foreground">
+								@InfoIcon("size-3.5")
+								<span>Поддерживается CommonMark + GFM</span>
+							</p>
+						</div>
+					</div>
+
+					<div class="flex flex-wrap items-center justify-between gap-3 border-t border-border px-4 py-4">
+						<p class="text-xs text-muted-foreground">
+							Конвертация использует публичный <code class="font-mono text-foreground">GitHub API</code>
+						</p>
+						<div class="flex items-center gap-2">
+							<button
+								type="reset"
+								class="focus-ring inline-flex h-9 items-center justify-center rounded-md border border-border bg-background px-3.5 text-sm font-medium text-foreground transition hover:bg-muted"
+							>
+								Сбросить
+							</button>
+							<button
+								type="submit"
+								class="focus-ring inline-flex h-9 items-center justify-center gap-2 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground transition hover:bg-primary/90"
+							>
+								<span>Конвертировать</span>
+								@ArrowRightIcon("size-4")
+							</button>
+						</div>
+					</div>
+				</section>
+			</form>
+
+			<div id="result" class="mt-6"></div>
+
+			<section class="mt-6 overflow-hidden rounded-xl border border-border bg-background shadow-xs">
+				<div class="flex items-center justify-between border-b border-border px-5 py-3.5">
+					<div class="flex items-center gap-2">
+						<span class="text-sm font-medium text-foreground">API</span>
+						<span class="inline-flex items-center rounded-md border border-border bg-muted px-1.5 py-px text-[10px] font-medium text-foreground font-mono">
+							POST /convert
+						</span>
+					</div>
+					<button
+						type="button"
+						class="focus-ring inline-flex size-7 items-center justify-center rounded-md text-muted-foreground transition hover:bg-muted hover:text-foreground"
+						aria-label="Скопировать curl"
+						data-copy-target="api-curl"
+						data-copy-label="curl"
+						onclick="window.mdToHTMLCopyButton(this)"
+					>
+						@CopyIcon("size-3.5")
+					</button>
+				</div>
+				<textarea id="api-curl" class="sr-only" readonly>curl -X POST http://localhost:8000/convert \
+  -H 'Content-Type: application/json' \
+  -d '&#123;"markdown":"# Hello"&#125;'</textarea>
+				<pre class="overflow-x-auto px-5 py-4 font-mono text-[12px] leading-relaxed text-foreground"><span class="text-muted-foreground">$</span> curl -X POST http://localhost:8000/convert \
+  -H 'Content-Type: application/json' \
+  -d '&#123;"markdown":"# Hello"&#125;'</pre>
 			</section>
 		</div>
+
 		<script>
-			window.mdToHTMLSwitchSource = function(value) {
-				const filePanel = document.getElementById("source-file");
-				const textPanel = document.getElementById("source-text");
-				if (!filePanel || !textPanel) {
-					return;
+			(() => {
+				function byId(id) {
+					return document.getElementById(id);
 				}
 
-				const showFile = value === "file";
-				filePanel.classList.toggle("hidden", !showFile);
-				textPanel.classList.toggle("hidden", showFile);
+				function formatBytes(bytes) {
+					if (bytes < 1024) {
+						return bytes + " B";
+					}
+					return (bytes / 1024).toFixed(1) + " KB";
+				}
 
-				document.querySelectorAll("[data-source-tab]").forEach((tab) => {
-					const tabValue = tab.getAttribute("data-source-tab");
-					const active = tabValue === value;
-					tab.className = active
-						? tab.getAttribute("data-active-classes")
-						: tab.getAttribute("data-inactive-classes");
-				});
-			};
+				function formatRelativeTime(lastModified) {
+					const delta = Date.now() - lastModified;
+					const minute = 60 * 1000;
+					const hour = 60 * minute;
+					const day = 24 * hour;
+
+					if (delta < minute) {
+						return "изменён только что";
+					}
+					if (delta < hour) {
+						const value = Math.max(1, Math.round(delta / minute));
+						return "изменён " + value + " мин назад";
+					}
+					if (delta < day) {
+						const value = Math.max(1, Math.round(delta / hour));
+						return "изменён " + value + " ч назад";
+					}
+					const value = Math.max(1, Math.round(delta / day));
+					return "изменён " + value + " дн назад";
+				}
+
+				function flashCopyState(button) {
+					if (!button) {
+						return;
+					}
+					const original = button.dataset.copyFlashOriginal || button.innerHTML;
+					button.dataset.copyFlashOriginal = original;
+					button.innerHTML = "Скопировано";
+					window.setTimeout(() => {
+						button.innerHTML = original;
+					}, 1400);
+				}
+
+				async function copyText(value) {
+					if (navigator.clipboard && window.isSecureContext) {
+						await navigator.clipboard.writeText(value);
+						return;
+					}
+
+					const helper = document.createElement("textarea");
+					helper.value = value;
+					helper.setAttribute("readonly", "readonly");
+					helper.style.position = "absolute";
+					helper.style.left = "-9999px";
+					document.body.appendChild(helper);
+					helper.select();
+					document.execCommand("copy");
+					document.body.removeChild(helper);
+				}
+
+				function bindDropzone() {
+					const dropzone = byId("markdown-dropzone");
+					const input = byId("markdown-file");
+					if (!dropzone || !input || dropzone.dataset.bound === "true") {
+						return;
+					}
+
+					const activeClasses = ["border-foreground/35", "bg-muted/60"];
+					dropzone.dataset.bound = "true";
+
+					dropzone.addEventListener("dragover", (event) => {
+						event.preventDefault();
+						activeClasses.forEach((className) => dropzone.classList.add(className));
+					});
+					dropzone.addEventListener("dragleave", () => {
+						activeClasses.forEach((className) => dropzone.classList.remove(className));
+					});
+					dropzone.addEventListener("drop", (event) => {
+						event.preventDefault();
+						activeClasses.forEach((className) => dropzone.classList.remove(className));
+						if (!event.dataTransfer || !event.dataTransfer.files.length) {
+							return;
+						}
+						input.files = event.dataTransfer.files;
+						window.mdToHTMLHandleFileChange(input);
+					});
+				}
+
+				window.mdToHTMLSetSource = function(source) {
+					const sourceField = byId("source-field");
+					const filePanel = byId("panel-file");
+					const textPanel = byId("panel-text");
+					const fileTab = byId("tab-file");
+					const textTab = byId("tab-text");
+					if (!sourceField || !filePanel || !textPanel || !fileTab || !textTab) {
+						return;
+					}
+
+					const showFile = source === "file";
+					sourceField.value = source;
+					filePanel.classList.toggle("hidden", !showFile);
+					filePanel.classList.toggle("flex", showFile);
+					textPanel.classList.toggle("hidden", showFile);
+					textPanel.classList.toggle("flex", !showFile);
+					fileTab.setAttribute("data-state", showFile ? "active" : "inactive");
+					textTab.setAttribute("data-state", showFile ? "inactive" : "active");
+				};
+
+				window.mdToHTMLHandleFileChange = function(input) {
+					const file = input && input.files && input.files[0];
+					const summary = byId("selected-file");
+					const fileName = byId("selected-file-name");
+					const fileMeta = byId("selected-file-meta");
+					if (!summary || !fileName || !fileMeta) {
+						return;
+					}
+
+					if (!file) {
+						summary.classList.add("hidden");
+						summary.classList.remove("flex");
+						return;
+					}
+
+					fileName.textContent = file.name;
+					fileMeta.textContent = formatBytes(file.size) + " · " + formatRelativeTime(file.lastModified);
+					summary.classList.remove("hidden");
+					summary.classList.add("flex");
+				};
+
+				window.mdToHTMLClearFile = function() {
+					const input = byId("markdown-file");
+					const summary = byId("selected-file");
+					if (input) {
+						input.value = "";
+					}
+					if (summary) {
+						summary.classList.add("hidden");
+						summary.classList.remove("flex");
+					}
+				};
+
+				window.mdToHTMLUpdateCharCount = function(textarea) {
+					const counter = byId("markdown-char-count");
+					if (!counter || !textarea) {
+						return;
+					}
+					const count = textarea.value.length;
+					counter.textContent = count + " символов";
+				};
+
+				window.mdToHTMLResetForm = function() {
+					window.mdToHTMLSetSource("file");
+					window.mdToHTMLClearFile();
+					const textarea = byId("markdown-text");
+					if (textarea) {
+						window.mdToHTMLUpdateCharCount(textarea);
+					}
+					const result = byId("result");
+					if (result) {
+						result.innerHTML = "";
+					}
+				};
+
+				window.mdToHTMLCopyButton = async function(button) {
+					if (!button) {
+						return;
+					}
+					const targetID = button.dataset.copyTarget;
+					const target = targetID ? byId(targetID) : null;
+					const value = target ? target.value || target.textContent || "" : "";
+					if (!value) {
+						return;
+					}
+					try {
+						await copyText(value);
+						flashCopyState(button);
+					} catch (_) {
+						// noop
+					}
+				};
+
+				function init() {
+					bindDropzone();
+					window.mdToHTMLSetSource("file");
+					const textarea = byId("markdown-text");
+					if (textarea) {
+						window.mdToHTMLUpdateCharCount(textarea);
+					}
+				}
+
+				if (document.readyState === "loading") {
+					document.addEventListener("DOMContentLoaded", init, { once: true });
+				} else {
+					init();
+				}
+			})();
 		</script>
 	}
 }
