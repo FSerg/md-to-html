@@ -15,7 +15,7 @@
 | 3  | [HTTP-сервер](phases/phase-3-server.md)              | ✅ done       | 2026-04-18 | 2026-04-18 | 843d8dc   |         |
 | 4  | [UI на templUI](phases/phase-4-ui.md)                | ✅ done       | 2026-04-18 | 2026-04-18 | d6aef55   |         |
 | 5  | [CLI-подкоманда](phases/phase-5-cli.md)              | ✅ done       | 2026-04-18 | 2026-04-18 | 6aa19fe   |         |
-| 6  | [Docker + CI](phases/phase-6-docker-ci.md)           | ⏳ pending    | —          | —          | —         |         |
+| 6  | [Docker + CI](phases/phase-6-docker-ci.md)           | 🔄 in_progress | 2026-04-18 | —          | —         |         |
 | 7  | [Документация + v0.2.0](phases/phase-7-docs.md)      | ⏳ pending    | —          | —          | —         |         |
 
 Легенда статусов:
