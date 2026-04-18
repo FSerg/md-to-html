@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on Keep a Changelog, and the project uses Semantic Versioning.
 
+## [0.2.1] - 2026-04-18
+
+### Fixed
+
+- GitHub release workflow now lowercases the GHCR image name before publishing, which fixes releases for repositories with uppercase owner names.
+
 ## [0.2.0] - 2026-04-18
 
 ### Changed
