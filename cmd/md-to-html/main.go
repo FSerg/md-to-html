@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"errors"
 	"flag"
 	"fmt"
 	"io"
@@ -9,6 +10,7 @@ import (
 	"os/signal"
 	"syscall"
 
+	internalcli "github.com/fserg/md-to-html/internal/cli"
 	"github.com/fserg/md-to-html/internal/converter"
 	"github.com/fserg/md-to-html/internal/server"
 	"github.com/fserg/md-to-html/internal/version"
@@ -85,19 +87,15 @@ func runServe(args []string, stdout, stderr io.Writer) int {
 }
 
 func runCLI(args []string, stdout, stderr io.Writer) int {
-	fs := flag.NewFlagSet("cli", flag.ContinueOnError)
-	fs.SetOutput(io.Discard)
-	if err := fs.Parse(args); err != nil {
+	err := internalcli.Run(context.Background(), args, os.Stdin, stdout, stderr)
+	if err == nil {
+		return 0
+	}
+	if errors.Is(err, internalcli.ErrUsage) {
 		return 2
 	}
-
-	if fs.NArg() != 1 {
-		fmt.Fprintln(stderr, "usage: md-to-html cli <file.md>")
-		return 2
-	}
-
-	fmt.Fprintf(stdout, "cli not implemented yet: %s\n", fs.Arg(0))
-	return 0
+	fmt.Fprintln(stderr, err)
+	return 1
 }
 
 func runVersion(args []string, stdout, stderr io.Writer) int {
@@ -119,12 +117,12 @@ func runVersion(args []string, stdout, stderr io.Writer) int {
 func printUsage(w io.Writer) {
 	fmt.Fprint(w, `Usage:
   md-to-html serve
-  md-to-html cli <file.md>
+  md-to-html cli [--stdin|-|<file.md>] [--output path] [--title str]
   md-to-html version
 
 Commands:
   serve    Start the HTTP server
-  cli      Convert a Markdown file stub
+  cli      Convert Markdown from a file or stdin
   version  Print the build version
 `)
 }
